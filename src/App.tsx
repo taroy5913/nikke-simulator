@@ -22,6 +22,7 @@ interface Props {
   middleQualityMolds: number;
   highQualityMolds: number;
   friendPoints: number;
+  numFriends: number;
   mileageShopPoints: number;
   advancedMileageShopPoints: number;
 }
@@ -51,6 +52,7 @@ const simulate = (props: Props): Sample => {
   let middleQualityMolds = props.middleQualityMolds;
   let highQualityMolds = props.highQualityMolds;
   let friendPoints = props.friendPoints;
+  let numFriends = props.numFriends;
   let mileageShopPoints = props.mileageShopPoints;
   let advancedMileageShopPoints = props.advancedMileageShopPoints;
   let res = {
@@ -70,7 +72,7 @@ const simulate = (props: Props): Sample => {
     if (t % 30 < 15) {
       middleQualityMolds += 2; // season pass
     }
-    friendPoints += 26 + Math.floor(5 * Math.random());
+    friendPoints += numFriends;
     
     // weekly mission
     if (t % 7 == 0) {
@@ -259,10 +261,10 @@ const App = () => {
   const [middleQualityMolds, setMiddleQualityMolds] = React.useState<string>("0");
   const [highQualityMolds, setHighQualityMolds] = React.useState<string>("0");
   const [friendPoints, setFriendPoints] = React.useState<string>("0");
+  const [numFriends, setNumFriends] = React.useState<string>("30");
   const [mileageShopPoints, setMileageShopPoints] = React.useState<string>("0");
   const [advancedMileageShopPoints, setAdvancedMileageShopPoints] = React.useState<string>("0");
   const totalSSRUnits = 36; // 6体がピルグリム
-  
 
   const result = predict({
     duplicates: [
@@ -279,6 +281,7 @@ const App = () => {
     middleQualityMolds: Int(middleQualityMolds),
     highQualityMolds: Int(highQualityMolds),
     friendPoints: Int(friendPoints),
+    numFriends: Int(numFriends),
     mileageShopPoints: Int(mileageShopPoints),
     advancedMileageShopPoints: Int(advancedMileageShopPoints)
   });
@@ -313,6 +316,7 @@ const App = () => {
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             フレンド
             <TextField label="ポイント" value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="人数" value={numFriends} onChange={e => setNumFriends(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "2ch"}}}>
             ショップ
