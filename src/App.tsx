@@ -137,20 +137,23 @@ const simulate = (props: Props): Sample => {
 
     // 特別募集
     while (advancedVouchers > 0) {
-      if (Math.random() < 0.02) {
+      const p = Math.random();
+      if (p < 0.02) {
         nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
-      } else {
+      } else if (p < 0.43 + 0.02) {
         bodyLabelShopPoints += 200;
+      } else {
+        bodyLabelShopPoints += 150;
       }
       advancedVouchers -= 1;
       advancedMileageShopPoints += 1;
       res.advancedVouchers += 1;  
     }
 
-    while (bodyLabelShopPoints >= 12000) {
-      bodyLabelShopPoints -= 12000;
-      highQualityMolds += 50;
+    while (bodyLabelShopPoints >= 1200) {
+      bodyLabelShopPoints -= 1200;
+      highQualityMolds += 5;
     }
 
     while (highQualityMolds >= 50) {
