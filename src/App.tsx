@@ -138,7 +138,7 @@ const simulate = (props: Props): Sample => {
     // 特別募集
     while (advancedVouchers > 0) {
       if (Math.random() < 0.02) {
-        nikkes[Math.floor(Math.random() * 15)] += 1;
+        nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
       } else {
         bodyLabelShopPoints += 200;
@@ -155,7 +155,7 @@ const simulate = (props: Props): Sample => {
 
     while (highQualityMolds >= 50) {
       if (Math.random() < 0.6) {
-        nikkes[Math.floor(Math.random() * 15)] += 1;
+        nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
       } else { // SR(40%)
         bodyLabelShopPoints += 200;
@@ -166,7 +166,7 @@ const simulate = (props: Props): Sample => {
 
     while (middleQualityMolds >= 50) {
       if (Math.random() < 0.2) {
-        nikkes[Math.floor(Math.random() * 15)] += 1;
+        nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
       } else { // SR(80%)
         bodyLabelShopPoints += 200;
@@ -178,7 +178,7 @@ const simulate = (props: Props): Sample => {
     while (friendPoints >= 10) {
       const p = Math.random();
       if (p < 0.02) {
-        nikkes[Math.floor(Math.random() * 15)] += 1;
+        nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
       } else if (p < 0.43 + 0.02) { // SR(43%)
         bodyLabelShopPoints += 200;
