@@ -1,3 +1,5 @@
+import { Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Container } from '@mui/system';
 import React from 'react';
 
 const sortForWishlist = (nikkes: number[]):number[] => {
@@ -252,37 +254,87 @@ const App = () => {
     advancedMileageShopPoints: Int(advancedMileageShopPoints)
   });
   return (
-    <div>
-      <h1>メガニケ - 3凸シミュレーター</h1>
+    <Container maxWidth="sm">
+      <h1>メガニケ3凸シミュレーター</h1>
 
-      <div>Lv.160を超えるために必要な3凸SSRの達成日数とガチャ回数の目安をシミュレーションするサービスです。</div>
-      <div>同じキャラをガチャで引くことを凸というらしいです。</div>
-      <div>
-        <div>SSR無凸<input value={numSSR0} onChange={e => setNumSSR0(e.target.value)} />体</div>
-        <div>SSR1凸<input value={numSSR1} onChange={e => setNumSSR1(e.target.value)} />体</div>
-        <div>SSR2凸<input value={numSSR2} onChange={e => setNumSSR2(e.target.value)} />体</div>
-        <div>SSR3凸以上<input value={numSSR3} onChange={e => setNumSSR3(e.target.value)} />体</div>
-        <div>一般募集チケット<input value={vouchers} onChange={e => setVouchers(e.target.value)} />枚</div>
-        <div>特別募集チケット<input value={advancedVouchers} onChange={e => setAdvancedVouchers(e.target.value)} />枚</div>
-        <div>ジュエル<input value={gems} onChange={e => setGems(e.target.value)} /></div>
-        <div>ボディラベル<input value={bodyLabelShopPoints} onChange={e => setBodyLabelShopPoints(e.target.value)} /></div>
-        <div>ミドルクオリティモールド<input value={middleQualityMolds} onChange={e => setMiddleQualityMolds(e.target.value)} /></div>
-        <div>ハイクオリティモールド<input value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} /></div>
-        <div>フレンドポイント<input value={friendPoints} onChange={e => setFriendPoints(e.target.value)} /></div>
-        <div>シルバーマイレージチケット<input value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} /></div>
-        <div>ゴールドマイレージチケット<input value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} /></div>   
-      </div>
+      <div>Lv.160を超えるために必要な3凸SSR5体の達成日数とガチャ回数の目安</div>
+      <Box sx={{display: "flex", flexWrap: "wrap"}}>
+        <div>
+          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
+            SSR
+            <TextField label="無凸" value={numSSR0} onChange={e => setNumSSR0(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
+            <TextField label="1凸" value={numSSR1} onChange={e => setNumSSR1(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
+            <TextField label="2凸" value={numSSR2} onChange={e => setNumSSR2(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
+            <TextField label="3凸以上" value={numSSR3} onChange={e => setNumSSR3(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
+          </Box>
+          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
+            チケット
+            <TextField label="一般募集" value={vouchers} onChange={e => setVouchers(e.target.value)} variant="outlined" size="small" style={{width: 120}} />
+            <TextField label="特別募集" value={advancedVouchers} onChange={e => setAdvancedVouchers(e.target.value)} variant="outlined" size="small" style={{width: 120}} />  
+          </Box>
+          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
+            ジュエル
+            <TextField value={gems} onChange={e => setGems(e.target.value)} variant="outlined" size="small" style={{width: 120}} />
+          </Box>
+          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
+            モールド
+            <TextField label="ミドルクオリティ" value={middleQualityMolds} onChange={e => setMiddleQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ハイクオリティ" value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+          </Box>
+          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
+            フレンドポイント
+            <TextField value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+          </Box>
+          <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "2ch"}}}>
+            ショップ
+            <TextField label="ボディラベル" value={bodyLabelShopPoints} onChange={e => setBodyLabelShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="シルバーマイレージ" value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ゴールドマイレージ" value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+          </Box>
+        </div>
+      </Box>
       <hr />
-      <div>
-        <div>平均日数: {Math.floor(result.days)}日</div>
-        <div>一般募集: {Math.floor(result.vouchers)}回</div>
-        <div>特別募集: {Math.floor(result.advancedVouchers)}回</div>
-        <div>ハイクオリティモールドガチャ: {Math.floor(result.highQualityVouchers)}回</div>
-        <div>ミドルクオリティモールドガチャ: {Math.floor(result.middleQualityVouchers)}回</div>
-        <div>ソーシャルポイント募集: {Math.floor(result.friendVouchers)}回</div>
-        <div>スペアボディ取得: {Math.floor(result.spareBodies)}体</div>
-      </div>
-    </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>#</TableCell>
+              <TableCell>平均</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>日数</TableCell>
+              <TableCell>{Math.floor(result.days)}日</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>一般募集</TableCell>
+              <TableCell>{Math.floor(result.vouchers)}回</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>特別募集</TableCell>
+              <TableCell>{Math.floor(result.advancedVouchers)}回</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ハイクオリティモールドガチャ</TableCell>
+              <TableCell>{Math.floor(result.highQualityVouchers)}回</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ミドルクオリティモールドガチャ</TableCell>
+              <TableCell>{Math.floor(result.middleQualityVouchers)}回</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ソーシャルポイント募集</TableCell>
+              <TableCell>{Math.floor(result.friendVouchers)}回</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>スペアボディ</TableCell>
+              <TableCell>{Math.floor(result.spareBodies)}体</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
   );
 }
 
