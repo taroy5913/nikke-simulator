@@ -311,7 +311,7 @@ const App = () => {
       <Box sx={{display: "flex", flexWrap: "wrap"}}>
         <div>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            SSR
+            一般SSR
             <TextField label="無凸" value={numSSR0} onChange={e => setNumSSR0(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
             <TextField label="1凸" value={numSSR1} onChange={e => setNumSSR1(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
             <TextField label="2凸" value={numSSR2} onChange={e => setNumSSR2(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
