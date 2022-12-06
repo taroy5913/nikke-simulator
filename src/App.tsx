@@ -253,7 +253,10 @@ const App = () => {
   });
   return (
     <div>
-      <h1>SSR3凸5体シミュレーター</h1>
+      <h1>メガニケ - 3凸シミュレーター</h1>
+
+      <div>Lv.160を超えるために必要な3凸SSRの達成日数とガチャ回数の目安をシミュレーションするサービスです。</div>
+      <div>同じキャラをガチャで引くことを凸というらしいです。</div>
       <div>
         <div>SSR無凸<input value={numSSR0} onChange={e => setNumSSR0(e.target.value)} />体</div>
         <div>SSR1凸<input value={numSSR1} onChange={e => setNumSSR1(e.target.value)} />体</div>
