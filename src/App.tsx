@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, FormGroup, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Container } from '@mui/system';
 import React from 'react';
 
@@ -25,6 +25,7 @@ interface Props {
   numFriends: number;
   mileageShopPoints: number;
   advancedMileageShopPoints: number;
+  useSubscription: boolean;
 }
 interface Sample {
   days: number;
@@ -67,7 +68,11 @@ const simulate = (props: Props): Sample => {
   } 
   for (let t = 1; t < 1000; ++t) {
     // daily mission
-    gems += 100 + 100 + Math.floor(Math.random() * 50); // daily mission + subscription and 派遣
+    gems += 100 + Math.floor(Math.random() * 30); // daily mission + 派遣報酬
+    if (props.useSubscription) {
+      gems += 100;
+    }
+
     middleQualityMolds += 5; // daily mission
     if (t % 30 < 15) { // season pass
       middleQualityMolds += [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10][t % 30];
@@ -254,6 +259,7 @@ const App = () => {
   const [numSSR1, setNumSSR1] = React.useState<string>("0");
   const [numSSR2, setNumSSR2] = React.useState<string>("0");
   const [numSSR3, setNumSSR3] = React.useState<string>("0");
+  const [useSubscription, setUseSubscription] = React.useState<boolean>(true);
   const [vouchers, setVouchers] = React.useState<string>("0");
   const [advancedVouchers, setAdvancedVouchers] = React.useState<string>("0");
   const [gems, setGems] = React.useState<string>("0");
@@ -283,13 +289,13 @@ const App = () => {
     friendPoints: Int(friendPoints),
     numFriends: Int(numFriends),
     mileageShopPoints: Int(mileageShopPoints),
-    advancedMileageShopPoints: Int(advancedMileageShopPoints)
+    advancedMileageShopPoints: Int(advancedMileageShopPoints),
+    useSubscription
   });
   return (
     <Container maxWidth="sm">
-      <h1>メガニケ3凸シミュレーター</h1>
-
-      <div>Lv.160を超えるために必要な3凸SSR5体の達成日数とガチャ回数の目安</div>
+      <h2>メガニケ3凸シミュレーター</h2>
+      <div>3凸SSR5体の達成日数とガチャ回数の目安(1000回の試行)</div>
       <Box sx={{display: "flex", flexWrap: "wrap"}}>
         <div>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
@@ -324,11 +330,15 @@ const App = () => {
             <TextField label="シルバーマイレージ" value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
             <TextField label="ゴールドマイレージ" value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
+          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
+            <FormGroup>
+              <FormControlLabel control={<Checkbox checked={useSubscription} onChange={e => setUseSubscription(!useSubscription)} />} label="30-DAY補給品" />
+            </FormGroup>
+          </Box>
         </div>
       </Box>
-      <hr />
       <TableContainer component={Paper}>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
