@@ -69,8 +69,8 @@ const simulate = (props: Props): Sample => {
     // daily mission
     gems += 100 + 100 + Math.floor(Math.random() * 50); // daily mission + subscription and 派遣
     middleQualityMolds += 5; // daily mission
-    if (t % 30 < 15) {
-      middleQualityMolds += 2; // season pass
+    if (t % 30 < 15) { // season pass
+      middleQualityMolds += [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10][t % 30];
     }
     friendPoints += numFriends;
     
