@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControlLabel, FormGroup, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Container } from '@mui/system';
 import React from 'react';
 
@@ -26,6 +26,7 @@ interface Props {
   mileageShopPoints: number;
   advancedMileageShopPoints: number;
   useSubscription: boolean;
+  usePremiumPass: boolean;
 }
 interface Sample {
   days: number;
@@ -76,6 +77,10 @@ const simulate = (props: Props): Sample => {
     middleQualityMolds += 5; // daily mission
     if (t % 30 < 15) { // season pass
       middleQualityMolds += [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10][t % 30];
+      if (props.usePremiumPass) {
+        highQualityMolds += [5, 3, 3, 3, 7, 3, 3, 3, 3, 7, 3, 3, 3, 3, 0][t % 30];
+        vouchers += [5, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3][t % 30];
+      }
     }
     friendPoints += numFriends;
     
@@ -259,7 +264,6 @@ const App = () => {
   const [numSSR1, setNumSSR1] = React.useState<string>("0");
   const [numSSR2, setNumSSR2] = React.useState<string>("0");
   const [numSSR3, setNumSSR3] = React.useState<string>("0");
-  const [useSubscription, setUseSubscription] = React.useState<boolean>(true);
   const [vouchers, setVouchers] = React.useState<string>("0");
   const [advancedVouchers, setAdvancedVouchers] = React.useState<string>("0");
   const [gems, setGems] = React.useState<string>("0");
@@ -270,6 +274,10 @@ const App = () => {
   const [numFriends, setNumFriends] = React.useState<string>("30");
   const [mileageShopPoints, setMileageShopPoints] = React.useState<string>("0");
   const [advancedMileageShopPoints, setAdvancedMileageShopPoints] = React.useState<string>("0");
+  
+  const [useSubscription, setUseSubscription] = React.useState<boolean>(true);
+  const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(true);
+
   const totalSSRUnits = 36; // 6体がピルグリム
 
   const result = predict({
@@ -290,7 +298,8 @@ const App = () => {
     numFriends: Int(numFriends),
     mileageShopPoints: Int(mileageShopPoints),
     advancedMileageShopPoints: Int(advancedMileageShopPoints),
-    useSubscription
+    useSubscription,
+    usePremiumPass
   });
   return (
     <Container maxWidth="sm">
@@ -330,10 +339,13 @@ const App = () => {
             <TextField label="シルバーマイレージ" value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
             <TextField label="ゴールドマイレージ" value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            <FormGroup>
-              <FormControlLabel control={<Checkbox checked={useSubscription} onChange={e => setUseSubscription(!useSubscription)} />} label="30-DAY補給品" />
-            </FormGroup>
+          <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "150ch"}}}>
+            <FormControl sx={{m: 3}} component="fieldset" variant='standard'>
+              <FormGroup row>
+                <FormControlLabel control={<Checkbox size="small" checked={useSubscription} onChange={e => setUseSubscription(e.target.checked)} />} label="30-DAY補給品" />
+                <FormControlLabel control={<Checkbox size="small" checked={usePremiumPass} onChange={e => setUsePremiumPass(e.target.checked)} />} label="プレミアムパス" />
+              </FormGroup>
+            </FormControl>
           </Box>
         </div>
       </Box>
