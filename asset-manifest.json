@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/nikke-simulator/static/css/main.e6c13ad2.css",
-    "main.js": "/nikke-simulator/static/js/main.ad9ac10b.js",
+    "main.js": "/nikke-simulator/static/js/main.dc79f30b.js",
     "static/js/787.484be8bf.chunk.js": "/nikke-simulator/static/js/787.484be8bf.chunk.js",
     "index.html": "/nikke-simulator/index.html",
     "main.e6c13ad2.css.map": "/nikke-simulator/static/css/main.e6c13ad2.css.map",
-    "main.ad9ac10b.js.map": "/nikke-simulator/static/js/main.ad9ac10b.js.map",
+    "main.dc79f30b.js.map": "/nikke-simulator/static/js/main.dc79f30b.js.map",
     "787.484be8bf.chunk.js.map": "/nikke-simulator/static/js/787.484be8bf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.ad9ac10b.js"
+    "static/js/main.dc79f30b.js"
   ]
 }
