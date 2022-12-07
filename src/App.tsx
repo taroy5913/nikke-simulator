@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Container } from '@mui/system';
 import React from 'react';
 
@@ -330,27 +330,28 @@ const predict = (params: Props, num:number = 1000): {min:Sample, max:Sample, avg
   }
   return res;
 }
-const Int = (v:string):number => {
-  return parseInt(v) || 0
+const Int = (s:string):number => {
+  const t = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+  return parseInt(t) || 0
 }
 const App = () => {
-  const [numSSR0, setNumSSR0] = React.useState<string>("0");
-  const [numSSR1, setNumSSR1] = React.useState<string>("0");
-  const [numSSR2, setNumSSR2] = React.useState<string>("0");
-  const [numSSR3, setNumSSR3] = React.useState<string>("0");
-  const [vouchers, setVouchers] = React.useState<string>("0");
-  const [advancedVouchers, setAdvancedVouchers] = React.useState<string>("0");
-  const [gems, setGems] = React.useState<string>("0");
-  const [bodyLabelShopPoints, setBodyLabelShopPoints] = React.useState<string>("0");
-  const [middleQualityMolds, setMiddleQualityMolds] = React.useState<string>("0");
-  const [highQualityMolds, setHighQualityMolds] = React.useState<string>("0");
-  const [friendPoints, setFriendPoints] = React.useState<string>("0");
+  const [numSSR0, setNumSSR0] = React.useState<string>("");
+  const [numSSR1, setNumSSR1] = React.useState<string>("");
+  const [numSSR2, setNumSSR2] = React.useState<string>("");
+  const [numSSR3, setNumSSR3] = React.useState<string>("");
+  const [vouchers, setVouchers] = React.useState<string>("");
+  const [advancedVouchers, setAdvancedVouchers] = React.useState<string>("");
+  const [gems, setGems] = React.useState<string>("");
+  const [bodyLabelShopPoints, setBodyLabelShopPoints] = React.useState<string>("");
+  const [middleQualityMolds, setMiddleQualityMolds] = React.useState<string>("");
+  const [highQualityMolds, setHighQualityMolds] = React.useState<string>("");
+  const [friendPoints, setFriendPoints] = React.useState<string>("");
   const [numFriends, setNumFriends] = React.useState<string>("30");
-  const [mileageShopPoints, setMileageShopPoints] = React.useState<string>("0");
-  const [advancedMileageShopPoints, setAdvancedMileageShopPoints] = React.useState<string>("0");
+  const [mileageShopPoints, setMileageShopPoints] = React.useState<string>("");
+  const [advancedMileageShopPoints, setAdvancedMileageShopPoints] = React.useState<string>("");
   
-  const [useSubscription, setUseSubscription] = React.useState<boolean>(true);
-  const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(true);
+  const [useSubscription, setUseSubscription] = React.useState<boolean>(false);
+  const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(false);
 
   const totalSSRUnits = 36; // 6体がピルグリム
 
@@ -378,40 +379,40 @@ const App = () => {
   return (
     <Container maxWidth="sm">
       <h2>メガニケ3凸シミュレーター</h2>
-      <div>3凸SSR5体の達成日数とガチャ回数の目安(1000回の試行)</div>
+      <div>3凸SSR5体の達成日数とガチャ回数の目安</div>
       <Box sx={{display: "flex", flexWrap: "wrap"}}>
         <div>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             一般SSR
-            <TextField label="無凸" value={numSSR0} onChange={e => setNumSSR0(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
-            <TextField label="1凸" value={numSSR1} onChange={e => setNumSSR1(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
-            <TextField label="2凸" value={numSSR2} onChange={e => setNumSSR2(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
-            <TextField label="3凸以上" value={numSSR3} onChange={e => setNumSSR3(e.target.value)} variant="outlined" size="small" style={{width: 70}} />
+            <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => setNumSSR0(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="1凸" placeholder="5" value={numSSR1} onChange={e => setNumSSR1(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="2凸" placeholder="2" value={numSSR2} onChange={e => setNumSSR2(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="3凸～" placeholder="0" value={numSSR3} onChange={e => setNumSSR3(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             チケット
-            <TextField label="一般募集" value={vouchers} onChange={e => setVouchers(e.target.value)} variant="outlined" size="small" style={{width: 120}} />
-            <TextField label="特別募集" value={advancedVouchers} onChange={e => setAdvancedVouchers(e.target.value)} variant="outlined" size="small" style={{width: 120}} />  
+            <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => setVouchers(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} style={{width: 120}} />
+            <TextField label="特別募集" placeholder="10" value={advancedVouchers} onChange={e => setAdvancedVouchers(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}}  style={{width: 120}} />  
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             ジュエル
-            <TextField label="ジュエル" value={gems} onChange={e => setGems(e.target.value)} variant="outlined" size="small" style={{width: 120}} />
+            <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => setGems(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             モールド
-            <TextField label="ミドルクオリティ" value={middleQualityMolds} onChange={e => setMiddleQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="ハイクオリティ" value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => setMiddleQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             フレンド
-            <TextField label="ポイント" value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="人数" value={numFriends} onChange={e => setNumFriends(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ポイント" placeholder="100" value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="人数" placeholder="30" value={numFriends} onChange={e => setNumFriends(e.target.value)} variant="outlined" size="small" style={{width: 150}}  InputProps={{endAdornment: <InputAdornment position="end">人</InputAdornment>}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "2ch"}}}>
             ショップ
-            <TextField label="ボディラベル" value={bodyLabelShopPoints} onChange={e => setBodyLabelShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="シルバーマイレージ" value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="ゴールドマイレージ" value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ボディラベル" placeholder="50000" value={bodyLabelShopPoints} onChange={e => setBodyLabelShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="シルバーマイレージ" placeholder="200" value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ゴールドマイレージ" placeholder="100" value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "150ch"}}}>
             <FormControl sx={{m: 3}} component="fieldset" variant='standard'>
