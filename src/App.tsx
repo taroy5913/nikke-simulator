@@ -66,6 +66,11 @@ interface Sample {
   seasonPassMiddleQualityMolds: number;
   premiumPassHighQualityMolds: number;
   premiumPassVouchers: number;
+
+  
+  numPilgrims: number; // ピルグリム排出回数
+  numAdvanced: number; // 期間限定排出回数
+  numOtherwise: number; // (ピルグリムと期間限定を除く)一般SSR排出回数
 }
 const getDefaultSample = (defaultValue:number=0): Sample => {
   return {
@@ -90,7 +95,10 @@ const getDefaultSample = (defaultValue:number=0): Sample => {
     subscriptionGems: 0,
     seasonPassMiddleQualityMolds: 0,
     premiumPassHighQualityMolds: 0,
-    premiumPassVouchers: 0
+    premiumPassVouchers: 0,
+    numOtherwise: 0,
+    numPilgrims: 0,
+    numAdvanced: 0
   }
 }
 
@@ -113,7 +121,7 @@ const simulate = (props: Props): Sample => {
   let mileageShopPoints = props.mileageShopPoints;
   let advancedMileageShopPoints = props.advancedMileageShopPoints;
   let res = getDefaultSample();
-  for (let t = 1; t < 1000; ++t) {
+  for (let t = 0; t < 1000; ++t) {
     // daily mission
     const dailyMissionGems = RewardConfig.dailyMissionGems + Math.floor(Math.random() * 30);
     gems += dailyMissionGems; // daily mission + 派遣報酬
@@ -139,7 +147,7 @@ const simulate = (props: Props): Sample => {
     friendPoints += numFriends;
     
     // weekly mission
-    if (t % 7 == 0) {
+    if (t % 7 == 6) {
       gems += RewardConfig.weeklyMissionGems;
       highQualityMolds += RewardConfig.weeklyMissionHighQualityMolds;
       vouchers += RewardConfig.weeklyMissionVouchers;
@@ -150,7 +158,7 @@ const simulate = (props: Props): Sample => {
     }
 
     // event bonus
-    if (t % 15 == 0) {
+    if (t % 15 == 14) {
       gems += RewardConfig.eventRewardGems; // login bonus
       vouchers += RewardConfig.eventRewardVouchers; // login bonus + event mission achievements
       advancedVouchers += RewardConfig.eventRewardAdvancedVouchers;
@@ -169,8 +177,10 @@ const simulate = (props: Props): Sample => {
       if (p < 0.035) { // SSR(not pilgrim, 3.5%)
         nikkes[Math.floor(Math.random() * 15)] += 1;
         nikkes = sortForWishlist(nikkes);
+        res.numOtherwise += 1;
       } else if (p < 0.005) { // SSR(pilgrim, 0.5%)
         nikkes[15 + Math.floor(Math.random() * (nikkes.length - 15))] += 1;
+        res.numPilgrims += 1;
       } else if (p < 0.43 + 0.04) { // SR(43%)
         bodyLabelShopPoints += 200;
       } else {
@@ -187,8 +197,10 @@ const simulate = (props: Props): Sample => {
       if (p < 0.035) { // SSR(not pilgrim, 3.5%)
         nikkes[Math.floor(Math.random() * 15)] += 1;
         nikkes = sortForWishlist(nikkes);
+        res.numOtherwise += 1;
       } else if (p < 0.005) { // SSR(pilgrim, 0.5%)
         nikkes[15 + Math.floor(Math.random() * (nikkes.length - 15))] += 1;
+        res.numPilgrims += 1;
       } else if (p < 0.43 + 0.04) { // SR(43%)
         bodyLabelShopPoints += 200;
       } else {
@@ -202,10 +214,17 @@ const simulate = (props: Props): Sample => {
     // 特別募集
     while (advancedVouchers > 0) {
       const p = Math.random();
-      if (p < 0.02) {
+      if (p < 0.02) { // Advanced SSR
+        res.numAdvanced += 1;
+      } else if (p < 0.02 + 0.02) { // normal SSR
         nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
-      } else if (p < 0.43 + 0.02) {
+        if (p < 0.02 + 0.005) {
+          res.numPilgrims += 1;
+        } else {
+          res.numOtherwise += 1;
+        }
+      } else if (p < 0.43 + 0.04) {
         bodyLabelShopPoints += 200;
       } else {
         bodyLabelShopPoints += 150;
@@ -224,6 +243,7 @@ const simulate = (props: Props): Sample => {
       if (Math.random() < 0.6) {
         nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
+        res.numOtherwise += 1;
       } else { // SR(40%)
         bodyLabelShopPoints += 200;
       }
@@ -235,6 +255,7 @@ const simulate = (props: Props): Sample => {
       if (Math.random() < 0.2) {
         nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
+        res.numOtherwise += 1;
       } else { // SR(80%)
         bodyLabelShopPoints += 200;
       }
@@ -247,6 +268,11 @@ const simulate = (props: Props): Sample => {
       if (p < 0.02) {
         nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
         nikkes = sortForWishlist(nikkes);
+        if (p < 0.005) {
+          res.numPilgrims += 1;
+        } else {
+          res.numOtherwise += 1;
+        }
       } else if (p < 0.43 + 0.02) { // SR(43%)
         bodyLabelShopPoints += 200;
       } else { // R(55%)
@@ -264,42 +290,20 @@ const simulate = (props: Props): Sample => {
     }
 
     if (satisfied(nikkes)) {
-      res.days = t;
+      res.days = t + 1;
       break;
     }
   }
   return res;
 }
 
-const predict = (params: Props, num:number = 1000): {min:Sample, max:Sample, avg:Sample} => {
+const predict = (params: Props, num:number = 1000): {avg:Sample} => {
   let res = {
-    min: getDefaultSample(num),
-    max: getDefaultSample(0),
     avg: getDefaultSample(0)
   }
 
   for (let k = 0; k < num; ++k) {
     const sample = simulate(params);
-    // 最短
-    res.min.days = Math.min(res.min.days, sample.days);
-    res.min.friendVouchers = Math.min(res.min.friendVouchers, sample.friendVouchers);
-    res.min.spareBodies = Math.min(res.min.spareBodies, sample.spareBodies);
-    res.min.advancedSpareBodies = Math.min(res.min.advancedSpareBodies, sample.advancedSpareBodies);
-    res.min.vouchers = Math.min(res.min.vouchers, sample.vouchers);
-    res.min.advancedVouchers = Math.min(res.min.advancedVouchers, sample.advancedVouchers);
-    res.min.highQualityVouchers = Math.min(res.min.highQualityVouchers, sample.highQualityVouchers);
-    res.min.middleQualityVouchers = Math.min(res.min.middleQualityVouchers, sample.middleQualityVouchers);
-  
-    // 最長
-    res.max.days = Math.max(res.max.days, sample.days);
-    res.max.friendVouchers = Math.max(res.max.friendVouchers, sample.friendVouchers);
-    res.max.spareBodies = Math.max(res.max.spareBodies, sample.spareBodies);
-    res.max.advancedSpareBodies = Math.max(res.max.advancedSpareBodies, sample.advancedSpareBodies);
-    res.max.vouchers = Math.max(res.max.vouchers, sample.vouchers);
-    res.max.advancedVouchers = Math.max(res.max.advancedVouchers, sample.advancedVouchers);
-    res.max.highQualityVouchers = Math.max(res.max.highQualityVouchers, sample.highQualityVouchers);
-    res.max.middleQualityVouchers = Math.max(res.max.middleQualityVouchers, sample.middleQualityVouchers);
-
     // 平均
     res.avg.days += sample.days / num;
     res.avg.friendVouchers += sample.friendVouchers / num;
@@ -327,6 +331,10 @@ const predict = (params: Props, num:number = 1000): {min:Sample, max:Sample, avg
     res.avg.seasonPassMiddleQualityMolds += sample.seasonPassMiddleQualityMolds / num;
     res.avg.premiumPassHighQualityMolds += sample.premiumPassHighQualityMolds / num;
     res.avg.premiumPassVouchers += sample.premiumPassVouchers / num;
+
+    res.avg.numPilgrims += sample.numPilgrims / num;
+    res.avg.numAdvanced += sample.numAdvanced / num;
+    res.avg.numOtherwise += sample.numOtherwise / num;
   }
   return res;
 }
@@ -428,7 +436,7 @@ const App = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
+              <TableCell>試行結果(1000回)</TableCell>
               <TableCell>平均</TableCell>
             </TableRow>
           </TableHead>
@@ -437,6 +445,21 @@ const App = () => {
               <TableCell>日数</TableCell>
               <TableCell>{result.avg.days.toPrecision(3)}</TableCell>
             </TableRow>
+            
+            <TableRow>
+              <TableCell>ピルグリム排出回数</TableCell>
+              <TableCell>{result.avg.numPilgrims.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>期間限定SSR排出回数</TableCell>
+              <TableCell>{result.avg.numAdvanced.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>その他SSR排出回数</TableCell>
+              <TableCell>{result.avg.numOtherwise.toPrecision(3)}</TableCell>
+            </TableRow>
+            
+
             <TableRow>
               <TableCell>一般募集</TableCell>
               <TableCell>{result.avg.vouchers.toPrecision(3)}</TableCell>
