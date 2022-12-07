@@ -12,7 +12,22 @@ const sortForWishlist = (nikkes: number[]):number[] => {
 const satisfied = (cnt: number[]):boolean => {
   return cnt.filter(x => x >= 4).length >= 5;
 }
-
+const RewardConfig = {
+  eventRewardGems: 300,
+  eventRewardVouchers: 20,
+  eventRewardAdvancedVouchers: 10,
+  eventRewardHighQualityMolds: 10,
+  eventRewardMiddleQualityMolds: 50,
+  dailyMissionGems: 100,
+  dailyMissionMiddleQualityMolds: 5,
+  weeklyMissionGems: 300,
+  weeklyMissionHighQualityMolds: 10,
+  weeklyMissionVouchers: 1,
+  subscriptionGems: 100,
+  seasonPassMiddleQualityMolds: [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10],
+  premiumPassHighQualityMolds: [5, 3, 3, 3, 7, 3, 3, 3, 3, 7, 3, 3, 3, 3, 0],
+  premiumPassVouchers: [5, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3]
+}
 interface Props {
   duplicates: number[]; // no body, single, duplicate, triplicate
   vouchers: number;
@@ -37,6 +52,46 @@ interface Sample {
   advancedVouchers: number;
   highQualityVouchers: number;
   middleQualityVouchers: number;
+  eventRewardGems: number;
+  eventRewardVouchers: number;
+  eventRewardAdvancedVouchers: number;
+  eventRewardHighQualityMolds: number;
+  eventRewardMiddleQualityMolds: number;
+  dailyMissionGems: number;
+  dailyMissionMiddleQualityMolds: number;
+  weeklyMissionGems: number;
+  weeklyMissionHighQualityMolds: number;
+  weeklyMissionVouchers: number;
+  subscriptionGems: number;
+  seasonPassMiddleQualityMolds: number;
+  premiumPassHighQualityMolds: number;
+  premiumPassVouchers: number;
+}
+const getDefaultSample = (defaultValue:number=0): Sample => {
+  return {
+    days: defaultValue,
+    friendVouchers: defaultValue,
+    spareBodies: defaultValue,
+    advancedSpareBodies: defaultValue,
+    vouchers: defaultValue,
+    advancedVouchers: defaultValue,
+    highQualityVouchers: defaultValue,
+    middleQualityVouchers: defaultValue,
+    eventRewardGems: 0,
+    eventRewardVouchers: 0,
+    eventRewardAdvancedVouchers: 0,
+    eventRewardHighQualityMolds: 0,
+    eventRewardMiddleQualityMolds: 0,
+    dailyMissionGems: 0,
+    dailyMissionMiddleQualityMolds: 0,
+    weeklyMissionGems: 0,
+    weeklyMissionHighQualityMolds: 0,
+    weeklyMissionVouchers: 0,
+    subscriptionGems: 0,
+    seasonPassMiddleQualityMolds: 0,
+    premiumPassHighQualityMolds: 0,
+    premiumPassVouchers: 0
+  }
 }
 
 const simulate = (props: Props): Sample => {
@@ -57,47 +112,56 @@ const simulate = (props: Props): Sample => {
   let numFriends = props.numFriends;
   let mileageShopPoints = props.mileageShopPoints;
   let advancedMileageShopPoints = props.advancedMileageShopPoints;
-  let res = {
-    days: 0,
-    friendVouchers: 0,
-    spareBodies: 0,
-    advancedSpareBodies: 0,
-    vouchers: 0,
-    advancedVouchers: 0,
-    highQualityVouchers: 0,
-    middleQualityVouchers: 0
-  } 
+  let res = getDefaultSample();
   for (let t = 1; t < 1000; ++t) {
     // daily mission
-    gems += 100 + Math.floor(Math.random() * 30); // daily mission + 派遣報酬
+    const dailyMissionGems = RewardConfig.dailyMissionGems + Math.floor(Math.random() * 30);
+    gems += dailyMissionGems; // daily mission + 派遣報酬
+    res.dailyMissionGems += dailyMissionGems;
+    middleQualityMolds += RewardConfig.dailyMissionMiddleQualityMolds; // daily mission
+    res.dailyMissionMiddleQualityMolds += RewardConfig.dailyMissionMiddleQualityMolds;
     if (props.useSubscription) {
-      gems += 100;
+      gems += RewardConfig.subscriptionGems;
+      res.subscriptionGems += RewardConfig.subscriptionGems;
     }
 
-    middleQualityMolds += 5; // daily mission
+    
     if (t % 30 < 15) { // season pass
-      middleQualityMolds += [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10][t % 30];
+      middleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
+      res.seasonPassMiddleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
       if (props.usePremiumPass) {
-        highQualityMolds += [5, 3, 3, 3, 7, 3, 3, 3, 3, 7, 3, 3, 3, 3, 0][t % 30];
-        vouchers += [5, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3][t % 30];
+        highQualityMolds += RewardConfig.premiumPassHighQualityMolds[t % 30];
+        vouchers += RewardConfig.premiumPassVouchers[t % 30];
+        res.premiumPassHighQualityMolds += RewardConfig.premiumPassHighQualityMolds[t % 30];
+        res.premiumPassVouchers += RewardConfig.premiumPassVouchers[t % 30];
       }
     }
     friendPoints += numFriends;
     
     // weekly mission
     if (t % 7 == 0) {
-      gems += 300;
-      highQualityMolds += 10;
-      vouchers += 1;
+      gems += RewardConfig.weeklyMissionGems;
+      highQualityMolds += RewardConfig.weeklyMissionHighQualityMolds;
+      vouchers += RewardConfig.weeklyMissionVouchers;
+
+      res.weeklyMissionGems += RewardConfig.weeklyMissionGems;
+      res.weeklyMissionHighQualityMolds += RewardConfig.weeklyMissionHighQualityMolds;
+      res.weeklyMissionVouchers += RewardConfig.weeklyMissionVouchers;
     }
 
     // event bonus
     if (t % 15 == 0) {
-      gems += 300; // login bonus
-      vouchers += 20; // login bonus + event mission achievements
-      advancedVouchers += 10;
-      highQualityMolds += 10;
-      middleQualityMolds += 50;
+      gems += RewardConfig.eventRewardGems; // login bonus
+      vouchers += RewardConfig.eventRewardVouchers; // login bonus + event mission achievements
+      advancedVouchers += RewardConfig.eventRewardAdvancedVouchers;
+      highQualityMolds += RewardConfig.eventRewardHighQualityMolds;
+      middleQualityMolds += RewardConfig.eventRewardMiddleQualityMolds;
+
+      res.eventRewardGems += RewardConfig.eventRewardGems;
+      res.eventRewardVouchers += RewardConfig.eventRewardVouchers;
+      res.eventRewardAdvancedVouchers += RewardConfig.eventRewardAdvancedVouchers;
+      res.eventRewardHighQualityMolds += RewardConfig.eventRewardHighQualityMolds;
+      res.eventRewardMiddleQualityMolds += RewardConfig.eventRewardMiddleQualityMolds;
     }
 
     while (gems >= 300) {
@@ -206,18 +270,7 @@ const simulate = (props: Props): Sample => {
   }
   return res;
 }
-const getDefaultSample = (defaultValue:number): Sample => {
-  return {
-    days: defaultValue,
-    friendVouchers: defaultValue,
-    spareBodies: defaultValue,
-    advancedSpareBodies: defaultValue,
-    vouchers: defaultValue,
-    advancedVouchers: defaultValue,
-    highQualityVouchers: defaultValue,
-    middleQualityVouchers: defaultValue
-  }
-}
+
 const predict = (params: Props, num:number = 1000): {min:Sample, max:Sample, avg:Sample} => {
   let res = {
     min: getDefaultSample(num),
@@ -256,6 +309,24 @@ const predict = (params: Props, num:number = 1000): {min:Sample, max:Sample, avg
     res.avg.advancedVouchers += sample.advancedVouchers / num;
     res.avg.highQualityVouchers += sample.highQualityVouchers / num;
     res.avg.middleQualityVouchers += sample.middleQualityVouchers / num;
+
+    res.avg.eventRewardGems += sample.eventRewardGems / num;
+    res.avg.eventRewardVouchers += sample.eventRewardVouchers / num;
+    res.avg.eventRewardAdvancedVouchers += sample.eventRewardAdvancedVouchers / num;
+    res.avg.eventRewardHighQualityMolds += sample.eventRewardHighQualityMolds / num;
+    res.avg.eventRewardMiddleQualityMolds += sample.eventRewardMiddleQualityMolds / num;
+  
+    res.avg.dailyMissionGems += sample.dailyMissionGems / num;
+    res.avg.dailyMissionMiddleQualityMolds += sample.dailyMissionMiddleQualityMolds / num;
+    res.avg.weeklyMissionGems += sample.weeklyMissionGems / num;
+    res.avg.weeklyMissionHighQualityMolds += sample.weeklyMissionHighQualityMolds / num;
+    res.avg.weeklyMissionVouchers += sample.weeklyMissionVouchers / num;
+
+    res.avg.subscriptionGems += sample.subscriptionGems / num;
+
+    res.avg.seasonPassMiddleQualityMolds += sample.seasonPassMiddleQualityMolds / num;
+    res.avg.premiumPassHighQualityMolds += sample.premiumPassHighQualityMolds / num;
+    res.avg.premiumPassVouchers += sample.premiumPassVouchers / num;
   }
   return res;
 }
@@ -405,6 +476,95 @@ const App = () => {
               <TableCell>{result.min.spareBodies}</TableCell>
               <TableCell>{result.max.spareBodies}</TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>イベント報酬ジュエル</TableCell>
+              <TableCell>{Math.floor(result.avg.eventRewardGems)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>イベント報酬一般募集チケット</TableCell>
+              <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>イベント報酬特別募集チケット</TableCell>
+              <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>イベント報酬特別募集ハイクオリティモールド</TableCell>
+              <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>イベント報酬特別募集ミドルクオリティモールド</TableCell>
+              <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>デイリーミッション達成ジュエル</TableCell>
+              <TableCell>{Math.floor(result.avg.dailyMissionGems)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>デイリーミッション達成ミドルクオリティモールド</TableCell>
+              <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>ウィークリーミッション達成ジュエル</TableCell>
+              <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ウィークリーミッション達成ハイクオリティモールド</TableCell>
+              <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ウィークリーミッション達成一般募集チケット</TableCell>
+              <TableCell>{result.avg.weeklyMissionVouchers.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>30-DAY補給ジュエル</TableCell>
+              <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>シーズンパスミドルクオリティモールド</TableCell>
+              <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>シーズンパスハイクオリティモールド</TableCell>
+              <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>シーズンパス一般募集チケット</TableCell>
+              <TableCell>{result.avg.premiumPassVouchers.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+
           </TableBody>
         </Table>
       </TableContainer>
