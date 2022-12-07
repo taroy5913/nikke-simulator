@@ -429,142 +429,130 @@ const App = () => {
             <TableRow>
               <TableCell></TableCell>
               <TableCell>平均</TableCell>
-              <TableCell>最短</TableCell>
-              <TableCell>最長</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
               <TableCell>日数</TableCell>
               <TableCell>{result.avg.days.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.days}</TableCell>
-              <TableCell>{result.max.days}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>一般募集</TableCell>
               <TableCell>{result.avg.vouchers.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.vouchers}</TableCell>
-              <TableCell>{result.max.vouchers}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>特別募集</TableCell>
               <TableCell>{result.avg.advancedVouchers.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.advancedVouchers}</TableCell>
-              <TableCell>{result.max.advancedVouchers}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>ハイクオリティモールドガチャ</TableCell>
               <TableCell>{result.avg.highQualityVouchers.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.highQualityVouchers}</TableCell>
-              <TableCell>{result.max.highQualityVouchers}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>ミドルクオリティモールドガチャ</TableCell>
               <TableCell>{result.avg.middleQualityVouchers.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.middleQualityVouchers}</TableCell>
-              <TableCell>{result.max.middleQualityVouchers}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>ソーシャルポイント募集</TableCell>
               <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.friendVouchers}</TableCell>
-              <TableCell>{result.max.friendVouchers}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>スペアボディ</TableCell>
               <TableCell>{result.avg.spareBodies.toPrecision(3)}</TableCell>
-              <TableCell>{result.min.spareBodies}</TableCell>
-              <TableCell>{result.max.spareBodies}</TableCell>
             </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <h3>累計獲得ジュエル</h3>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
             <TableRow>
-              <TableCell>イベント報酬ジュエル</TableCell>
+              <TableCell></TableCell>
+              <TableCell>平均</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>イベント報酬</TableCell>
               <TableCell>{Math.floor(result.avg.eventRewardGems)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>イベント報酬一般募集チケット</TableCell>
-              <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>イベント報酬特別募集チケット</TableCell>
-              <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>イベント報酬特別募集ハイクオリティモールド</TableCell>
-              <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>イベント報酬特別募集ミドルクオリティモールド</TableCell>
-              <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell>デイリーミッション達成ジュエル</TableCell>
+              <TableCell>デイリーミッション達成</TableCell>
               <TableCell>{Math.floor(result.avg.dailyMissionGems)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>デイリーミッション達成ミドルクオリティモールド</TableCell>
-              <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell>ウィークリーミッション達成ジュエル</TableCell>
+              <TableCell>ウィークリーミッション達成</TableCell>
               <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>ウィークリーミッション達成ハイクオリティモールド</TableCell>
-              <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell>30-DAY補給品</TableCell>
+              <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <h3>累計獲得チケット</h3>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
               <TableCell></TableCell>
-              <TableCell></TableCell>
+              <TableCell>一般募集</TableCell>
+              <TableCell>特別募集</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>イベント報酬</TableCell>
+              <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
+              <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>ウィークリーミッション達成一般募集チケット</TableCell>
+              <TableCell>ウィークリーミッション</TableCell>
               <TableCell>{result.avg.weeklyMissionVouchers.toPrecision(3)}</TableCell>
               <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell>30-DAY補給ジュエル</TableCell>
-              <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell>シーズンパスミドルクオリティモールド</TableCell>
-              <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>シーズンパスハイクオリティモールド</TableCell>
-              <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>シーズンパス一般募集チケット</TableCell>
+              <TableCell>プレミアムパス</TableCell>
               <TableCell>{result.avg.premiumPassVouchers.toPrecision(3)}</TableCell>
               <TableCell></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <h3>累計獲得モールド</h3>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>ミドルクオリティ</TableCell>
+              <TableCell>ハイクオリティ</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>イベント報酬</TableCell>
+              <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>デイリーミッション</TableCell>
+              <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
               <TableCell></TableCell>
             </TableRow>
-
+            <TableRow>
+              <TableCell>ウィークリーミッション</TableCell>
+              <TableCell></TableCell>
+              <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>  
+            </TableRow>
+            <TableRow>
+              <TableCell>シーズンパス</TableCell>
+              <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
