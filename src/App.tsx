@@ -361,7 +361,7 @@ const App = () => {
   const [useSubscription, setUseSubscription] = React.useState<boolean>(false);
   const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(false);
 
-  const totalSSRUnits = 36; // 6体がピルグリム
+  const totalSSRUnits = 38; // 6体がピルグリム(2022.12.08にヘルム、ラプラスが恒常に追加)
 
   const result = predict({
     duplicates: [
@@ -412,7 +412,7 @@ const App = () => {
             <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            フレンド❤
+            フレンド💗
             <TextField label="ポイント" placeholder="100" value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
             <TextField label="人数" placeholder="30" value={numFriends} onChange={e => setNumFriends(e.target.value)} variant="outlined" size="small" style={{width: 150}}  InputProps={{endAdornment: <InputAdornment position="end">人</InputAdornment>}} />
           </Box>
