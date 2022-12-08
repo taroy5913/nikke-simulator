@@ -134,7 +134,7 @@ const simulate = (props: Props): Sample => {
     }
 
     
-    if (t % 30 < 15) { // season pass
+    if (t % 30 < RewardConfig.seasonPassMiddleQualityMolds.length) { // season pass
       middleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
       res.seasonPassMiddleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
       if (props.usePremiumPass) {
@@ -398,21 +398,21 @@ const App = () => {
             <TextField label="3凸～" placeholder="0" value={numSSR3} onChange={e => setNumSSR3(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            チケット
+            チケット🎫
             <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => setVouchers(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} style={{width: 120}} />
             <TextField label="特別募集" placeholder="10" value={advancedVouchers} onChange={e => setAdvancedVouchers(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}}  style={{width: 120}} />  
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            ジュエル
+            ジュエル💎
             <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => setGems(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            モールド
+            モールド🔶
             <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => setMiddleQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
             <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            フレンド
+            フレンド❤
             <TextField label="ポイント" placeholder="100" value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
             <TextField label="人数" placeholder="30" value={numFriends} onChange={e => setNumFriends(e.target.value)} variant="outlined" size="small" style={{width: 150}}  InputProps={{endAdornment: <InputAdornment position="end">人</InputAdornment>}} />
           </Box>
@@ -488,7 +488,7 @@ const App = () => {
         </Table>
       </TableContainer>
 
-      <h3>累計獲得ジュエル</h3>
+      <h3>累計獲得ジュエル💎</h3>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
@@ -517,7 +517,7 @@ const App = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <h3>累計獲得チケット</h3>
+      <h3>累計獲得チケット🎫</h3>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
@@ -546,7 +546,7 @@ const App = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <h3>累計獲得モールド</h3>
+      <h3>累計獲得モールド🔶</h3>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
