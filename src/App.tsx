@@ -9,8 +9,8 @@ const sortForWishlist = (nikkes: number[]):number[] => {
   return a.concat(b);
 }
 
-const satisfied = (cnt: number[]):boolean => {
-  return cnt.filter(x => x >= 4).length >= 5;
+const satisfied = (nikkes: number[], advancedNikkes: number[]):boolean => {
+  return (advancedNikkes.filter(x => x >= 4).length + nikkes.filter(x => x >= 4).length) >= 5;
 }
 const RewardConfig = {
   eventRewardGems: 300,
@@ -42,6 +42,7 @@ interface Props {
   advancedMileageShopPoints: number;
   useSubscription: boolean;
   usePremiumPass: boolean;
+  useGemsForAdvanced: boolean;
 }
 interface Sample {
   days: number;
@@ -110,6 +111,7 @@ const simulate = (props: Props): Sample => {
       nikkes.push(i);
     }
   }
+  let advancedNikkes: number[] = new Array(100).fill(0);
   let vouchers = props.vouchers;
   let advancedVouchers = props.advancedVouchers;
   let gems = props.gems;
@@ -172,23 +174,14 @@ const simulate = (props: Props): Sample => {
       res.eventRewardMiddleQualityMolds += RewardConfig.eventRewardMiddleQualityMolds;
     }
 
+    // ジュエルを募集チケットに変換
     while (gems >= 300) {
-      const p = Math.random();
-      if (p < 0.035) { // SSR(not pilgrim, 3.5%)
-        nikkes[Math.floor(Math.random() * 15)] += 1;
-        nikkes = sortForWishlist(nikkes);
-        res.numOtherwise += 1;
-      } else if (p < 0.005) { // SSR(pilgrim, 0.5%)
-        nikkes[15 + Math.floor(Math.random() * (nikkes.length - 15))] += 1;
-        res.numPilgrims += 1;
-      } else if (p < 0.43 + 0.04) { // SR(43%)
-        bodyLabelShopPoints += 200;
-      } else {
-        bodyLabelShopPoints += 150;  
-      }
       gems -= 300;
-      mileageShopPoints += 1;
-      res.vouchers += 1;
+      if (props.useGemsForAdvanced) {
+        advancedVouchers += 1;
+      } else {
+        vouchers += 1;
+      }  
     }
 
     // 一般募集
@@ -213,8 +206,18 @@ const simulate = (props: Props): Sample => {
 
     // 特別募集
     while (advancedVouchers > 0) {
+      if (advancedNikkes[Math.floor(t / 15)] >= 4) {
+        // 2週間ごとに特別募集が更新される想定
+        break;
+      }
       const p = Math.random();
       if (p < 0.02) { // Advanced SSR
+        for (let i = 0; i < advancedNikkes.length; ++i) {
+          if (advancedNikkes[i] < 4) {
+            advancedNikkes[i] += 1;
+            break;
+          }
+        }
         res.numAdvanced += 1;
       } else if (p < 0.02 + 0.02) { // normal SSR
         nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
@@ -288,8 +291,18 @@ const simulate = (props: Props): Sample => {
       nikkes = sortForWishlist(nikkes);
       res.spareBodies += 1;
     }
+    while (advancedMileageShopPoints >= 200) {
+      advancedMileageShopPoints -= 200;
+      for (let i = 0; i < advancedNikkes.length; ++i) {
+        if (advancedNikkes[i] < 4) {
+          advancedNikkes[i] += 1;
+          break;
+        }
+      }
+      res.advancedSpareBodies += 1;
+    }
 
-    if (satisfied(nikkes)) {
+    if (satisfied(nikkes, advancedNikkes)) {
       res.days = t + 1;
       break;
     }
@@ -358,7 +371,8 @@ export enum LocalStorageKeys {
   MILEAGE_SHOP_POINTS = "MILEAGE_SHOP_POINTS",
   ADVANCED_MILEAGE_SHOP_POINTS = "ADVANCED_MILEAGE_SHOP_POINTS",
   USE_SUBSCRIPTION = "USE_SUBSCRIPTION",
-  USE_PREMIUM_PASS = "USE_PREMIUM_PASS"
+  USE_PREMIUM_PASS = "USE_PREMIUM_PASS",
+  USE_GEM_FOR_ADVANCED = "USE_GEM_FOR_ADVANCED",
 };
 
 const App = () => {
@@ -379,6 +393,7 @@ const App = () => {
   
   const [useSubscription, setUseSubscription] = React.useState<boolean>(false);
   const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(false);
+  const [useGemsForAdvanced, setUseGemsForAdvanced] = React.useState<boolean>(false);
 
   const totalSSRUnits = 38; // 6体がピルグリム(2022.12.08にヘルム、ラプラスが恒常に追加)
 
@@ -400,6 +415,7 @@ const App = () => {
     setAdvancedMileageShopPoints(localStorage.getItem(LocalStorageKeys.ADVANCED_MILEAGE_SHOP_POINTS) || "");
     setUseSubscription(localStorage.getItem(LocalStorageKeys.USE_SUBSCRIPTION) === "checked");
     setUsePremiumPass(localStorage.getItem(LocalStorageKeys.USE_PREMIUM_PASS) === "checked");
+    setUseGemsForAdvanced(localStorage.getItem(LocalStorageKeys.USE_GEM_FOR_ADVANCED) === "checked");
   }, []);
 
   React.useEffect(() => {
@@ -450,6 +466,9 @@ const App = () => {
   React.useEffect(() => {
     localStorage.setItem(LocalStorageKeys.USE_PREMIUM_PASS, usePremiumPass ? "checked" : "");
   }, [usePremiumPass]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.USE_GEM_FOR_ADVANCED, useGemsForAdvanced ? "checked" : "");
+  }, [useGemsForAdvanced]);
 
   const result = predict({
     duplicates: [
@@ -470,7 +489,8 @@ const App = () => {
     mileageShopPoints: Int(mileageShopPoints),
     advancedMileageShopPoints: Int(advancedMileageShopPoints),
     useSubscription,
-    usePremiumPass
+    usePremiumPass,
+    useGemsForAdvanced
   });
   return (
     <Container maxWidth="sm">
@@ -548,6 +568,11 @@ const App = () => {
                   setUsePremiumPass(e.target.checked);
                 }} />} label="プレミアムパス" />
               </FormGroup>
+              <FormGroup row>
+                <FormControlLabel control={<Checkbox size="small" checked={useGemsForAdvanced} onChange={e => {
+                  setUseGemsForAdvanced(e.target.checked);
+                }} />} label="ジュエルは特別募集優先" />
+              </FormGroup>
             </FormControl>
           </Box>
         </div>
@@ -600,8 +625,12 @@ const App = () => {
               <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>スペアボディ</TableCell>
+              <TableCell>恒常スペアボディ交換</TableCell>
               <TableCell>{result.avg.spareBodies.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>特別スペアボディ交換</TableCell>
+              <TableCell>{result.avg.advancedSpareBodies.toPrecision(3)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
