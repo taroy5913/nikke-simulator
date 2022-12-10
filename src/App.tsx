@@ -1,6 +1,6 @@
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Container } from '@mui/system';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const sortForWishlist = (nikkes: number[]):number[] => {
   let a = nikkes.filter(x => x < 4);
@@ -342,6 +342,25 @@ const Int = (s:string):number => {
   const t = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
   return parseInt(t) || 0
 }
+export enum LocalStorageKeys {
+  NUM_SSR0 = "NUM_SSR0",
+  NUM_SSR1 = "NUM_SSR1",
+  NUM_SSR2 = "NUM_SSR2",
+  NUM_SSR3 = "NUM_SSR3",
+  VOUCHERS = "VOUCHERS",
+  ADVANCED_VOUCHERS = "ADVANCED_VOUCHERS",
+  GEMS = "GEMS",
+  BODY_LABEL_SHOP_POINTS = "BODY_LABEL_SHOP_POINTS",
+  MIDDLE_QUALITY_MOLDS = "MIDDLE_QUALITY_MOLDS",
+  HIGH_QUALITY_MOLDS = "HIGH_QUALITY_MOLDS",
+  FRIEND_POINTS = "FRIEND_POINTS",
+  NUM_FRIENDS = "NUM_FRIENDS",
+  MILEAGE_SHOP_POINTS = "MILEAGE_SHOP_POINTS",
+  ADVANCED_MILEAGE_SHOP_POINTS = "ADVANCED_MILEAGE_SHOP_POINTS",
+  USE_SUBSCRIPTION = "USE_SUBSCRIPTION",
+  USE_PREMIUM_PASS = "USE_PREMIUM_PASS"
+};
+
 const App = () => {
   const [numSSR0, setNumSSR0] = React.useState<string>("");
   const [numSSR1, setNumSSR1] = React.useState<string>("");
@@ -354,7 +373,7 @@ const App = () => {
   const [middleQualityMolds, setMiddleQualityMolds] = React.useState<string>("");
   const [highQualityMolds, setHighQualityMolds] = React.useState<string>("");
   const [friendPoints, setFriendPoints] = React.useState<string>("");
-  const [numFriends, setNumFriends] = React.useState<string>("30");
+  const [numFriends, setNumFriends] = React.useState<string>("");
   const [mileageShopPoints, setMileageShopPoints] = React.useState<string>("");
   const [advancedMileageShopPoints, setAdvancedMileageShopPoints] = React.useState<string>("");
   
@@ -362,6 +381,75 @@ const App = () => {
   const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(false);
 
   const totalSSRUnits = 38; // 6体がピルグリム(2022.12.08にヘルム、ラプラスが恒常に追加)
+
+  React.useEffect(() => {
+    setNumSSR0(localStorage.getItem(LocalStorageKeys.NUM_SSR0) || "");
+    setNumSSR1(localStorage.getItem(LocalStorageKeys.NUM_SSR1) || "");
+    setNumSSR2(localStorage.getItem(LocalStorageKeys.NUM_SSR2) || "");
+    setNumSSR3(localStorage.getItem(LocalStorageKeys.NUM_SSR3) || "");
+    setVouchers(localStorage.getItem(LocalStorageKeys.VOUCHERS) || "");
+    setAdvancedVouchers(localStorage.getItem(LocalStorageKeys.ADVANCED_VOUCHERS) || "");
+    setGems(localStorage.getItem(LocalStorageKeys.GEMS) || "");
+    setBodyLabelShopPoints(localStorage.getItem(LocalStorageKeys.BODY_LABEL_SHOP_POINTS) || "");
+    setMiddleQualityMolds(localStorage.getItem(LocalStorageKeys.MIDDLE_QUALITY_MOLDS) || "");
+    setHighQualityMolds(localStorage.getItem(LocalStorageKeys.HIGH_QUALITY_MOLDS) || "");
+    setFriendPoints(localStorage.getItem(LocalStorageKeys.FRIEND_POINTS) || "0");
+    setNumFriends(localStorage.getItem(LocalStorageKeys.NUM_FRIENDS) || "30");
+    setBodyLabelShopPoints(localStorage.getItem(LocalStorageKeys.BODY_LABEL_SHOP_POINTS) || "");
+    setMileageShopPoints(localStorage.getItem(LocalStorageKeys.MILEAGE_SHOP_POINTS) || "");
+    setAdvancedMileageShopPoints(localStorage.getItem(LocalStorageKeys.ADVANCED_MILEAGE_SHOP_POINTS) || "");
+    setUseSubscription(localStorage.getItem(LocalStorageKeys.USE_SUBSCRIPTION) === "checked");
+    setUsePremiumPass(localStorage.getItem(LocalStorageKeys.USE_PREMIUM_PASS) === "checked");
+  }, []);
+
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.NUM_SSR0, numSSR0);
+  }, [numSSR0]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.NUM_SSR1, numSSR1);
+  }, [numSSR1]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.NUM_SSR2, numSSR2);
+  }, [numSSR2]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.NUM_SSR3, numSSR3);
+  }, [numSSR3]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.VOUCHERS, vouchers);
+  }, [vouchers]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.ADVANCED_VOUCHERS, advancedVouchers);
+  }, [advancedVouchers]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.GEMS, gems);
+  }, [gems]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.BODY_LABEL_SHOP_POINTS, bodyLabelShopPoints);
+  }, [bodyLabelShopPoints]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.MIDDLE_QUALITY_MOLDS, middleQualityMolds);
+  }, [middleQualityMolds]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.HIGH_QUALITY_MOLDS, highQualityMolds);
+  }, [highQualityMolds]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.FRIEND_POINTS, friendPoints);
+  }, [friendPoints]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.BODY_LABEL_SHOP_POINTS, bodyLabelShopPoints);
+  }, [bodyLabelShopPoints]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.MILEAGE_SHOP_POINTS, mileageShopPoints);
+  }, [mileageShopPoints]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.ADVANCED_MILEAGE_SHOP_POINTS, advancedMileageShopPoints);
+  }, [advancedMileageShopPoints]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.USE_SUBSCRIPTION, useSubscription ? "checked" : "");
+  }, [useSubscription]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.USE_PREMIUM_PASS, usePremiumPass ? "checked" : "");
+  }, [usePremiumPass]);
 
   const result = predict({
     duplicates: [
@@ -392,41 +480,73 @@ const App = () => {
         <div>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             恒常SSR
-            <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => setNumSSR0(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-            <TextField label="1凸" placeholder="5" value={numSSR1} onChange={e => setNumSSR1(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-            <TextField label="2凸" placeholder="2" value={numSSR2} onChange={e => setNumSSR2(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-            <TextField label="3凸～" placeholder="0" value={numSSR3} onChange={e => setNumSSR3(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => {
+              setNumSSR0(e.target.value);
+            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="1凸" placeholder="5" value={numSSR1} onChange={e => {
+              setNumSSR1(e.target.value);
+            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="2凸" placeholder="2" value={numSSR2} onChange={e => {
+              setNumSSR2(e.target.value);
+            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
+            <TextField label="3凸～" placeholder="0" value={numSSR3} onChange={e => {
+              setNumSSR3(e.target.value);
+            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             チケット🎫
-            <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => setVouchers(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} style={{width: 120}} />
-            <TextField label="特別募集" placeholder="10" value={advancedVouchers} onChange={e => setAdvancedVouchers(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}}  style={{width: 120}} />  
+            <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => {
+              setVouchers(e.target.value);
+            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} style={{width: 120}} />
+            <TextField label="特別募集" placeholder="10" value={advancedVouchers} onChange={e => {
+              setAdvancedVouchers(e.target.value);
+            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}}  style={{width: 120}} />  
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             ジュエル💎
-            <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => setGems(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => {
+              setGems(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             モールド🔶
-            <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => setMiddleQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => setHighQualityMolds(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => {
+              setMiddleQualityMolds(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => {
+              setHighQualityMolds(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
             フレンド💗
-            <TextField label="ポイント" placeholder="100" value={friendPoints} onChange={e => setFriendPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="人数" placeholder="30" value={numFriends} onChange={e => setNumFriends(e.target.value)} variant="outlined" size="small" style={{width: 150}}  InputProps={{endAdornment: <InputAdornment position="end">人</InputAdornment>}} />
+            <TextField label="保有Pt" placeholder="100" value={friendPoints} onChange={e => {
+              setFriendPoints(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}}/>
+            <TextField label="獲得Pt/日" placeholder="30" value={numFriends} onChange={e => {
+              setNumFriends(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}}/>
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "2ch"}}}>
             ショップ
-            <TextField label="ボディラベル" placeholder="50000" value={bodyLabelShopPoints} onChange={e => setBodyLabelShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="シルバーマイレージ" placeholder="200" value={mileageShopPoints} onChange={e => setMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="ゴールドマイレージ" placeholder="100" value={advancedMileageShopPoints} onChange={e => setAdvancedMileageShopPoints(e.target.value)} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ボディラベル" placeholder="50000" value={bodyLabelShopPoints} onChange={e => {
+              setBodyLabelShopPoints(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="シルバーマイレージ" placeholder="200" value={mileageShopPoints} onChange={e => {
+              setMileageShopPoints(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}} />
+            <TextField label="ゴールドマイレージ" placeholder="100" value={advancedMileageShopPoints} onChange={e => {
+              setAdvancedMileageShopPoints(e.target.value);
+            }} variant="outlined" size="small" style={{width: 150}} />
           </Box>
           <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "150ch"}}}>
             <FormControl sx={{m: 3}} component="fieldset" variant='standard'>
               <FormGroup row>
-                <FormControlLabel control={<Checkbox size="small" checked={useSubscription} onChange={e => setUseSubscription(e.target.checked)} />} label="30-DAY補給品" />
-                <FormControlLabel control={<Checkbox size="small" checked={usePremiumPass} onChange={e => setUsePremiumPass(e.target.checked)} />} label="プレミアムパス" />
+                <FormControlLabel control={<Checkbox size="small" checked={useSubscription} onChange={e => {
+                  setUseSubscription(e.target.checked);
+                }} />} label="30-DAY補給品" />
+                <FormControlLabel control={<Checkbox size="small" checked={usePremiumPass} onChange={e => {
+                  setUsePremiumPass(e.target.checked);
+                }} />} label="プレミアムパス" />
               </FormGroup>
             </FormControl>
           </Box>
@@ -458,7 +578,6 @@ const App = () => {
               <TableCell>その他SSR排出回数</TableCell>
               <TableCell>{result.avg.numOtherwise.toPrecision(3)}</TableCell>
             </TableRow>
-            
 
             <TableRow>
               <TableCell>一般募集</TableCell>
