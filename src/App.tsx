@@ -391,7 +391,7 @@ const App = () => {
       <Box sx={{display: "flex", flexWrap: "wrap"}}>
         <div>
           <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            一般SSR
+            恒常SSR
             <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => setNumSSR0(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
             <TextField label="1凸" placeholder="5" value={numSSR1} onChange={e => setNumSSR1(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
             <TextField label="2凸" placeholder="2" value={numSSR2} onChange={e => setNumSSR2(e.target.value)} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
@@ -451,7 +451,7 @@ const App = () => {
               <TableCell>{result.avg.numPilgrims.toPrecision(3)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>期間限定SSR排出回数</TableCell>
+              <TableCell>特別募集SSR排出回数</TableCell>
               <TableCell>{result.avg.numAdvanced.toPrecision(3)}</TableCell>
             </TableRow>
             <TableRow>
