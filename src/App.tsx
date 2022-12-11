@@ -377,11 +377,6 @@ export enum LocalStorageKeys {
 };
 
 const App = () => {
-  const theme = createTheme({
-    palette: {
-      mode: "dark"
-    }
-  });
   const [numSSR0, setNumSSR0] = React.useState<string>("");
   const [numSSR1, setNumSSR1] = React.useState<string>("");
   const [numSSR2, setNumSSR2] = React.useState<string>("");
@@ -499,243 +494,261 @@ const App = () => {
     useGemsForAdvanced
   });
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Container maxWidth="sm">
-        <Typography variant='h2'>メガニケ3凸シミュレーター</Typography>
-        <Typography variant='caption'>3凸SSR5体の達成日数とガチャ回数の目安</Typography>
-        <Box sx={{display: "flex", flexWrap: "wrap"}}>
-          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            恒常SSR
-            <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => {
-              setNumSSR0(e.target.value);
-            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-            <TextField label="1凸" placeholder="5" value={numSSR1} onChange={e => {
-              setNumSSR1(e.target.value);
-            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-            <TextField label="2凸" placeholder="2" value={numSSR2} onChange={e => {
-              setNumSSR2(e.target.value);
-            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-            <TextField label="3凸～" placeholder="0" value={numSSR3} onChange={e => {
-              setNumSSR3(e.target.value);
-            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} style={{width: 80}} />
-          </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            チケット🎫
-            <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => {
-              setVouchers(e.target.value);
-            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} style={{width: 120}} />
-            <TextField label="特別募集" placeholder="10" value={advancedVouchers} onChange={e => {
-              setAdvancedVouchers(e.target.value);
-            }} variant="outlined" size="small" InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}}  style={{width: 120}} />  
-          </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            ジュエル💎
-            <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => {
-              setGems(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}} />
-          </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            モールド🔶
-            <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => {
-              setMiddleQualityMolds(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => {
-              setHighQualityMolds(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}} />
-          </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 1, width: "25ch"}}}>
-            フレンド💗
-            <TextField label="保有Pt" placeholder="100" value={friendPoints} onChange={e => {
-              setFriendPoints(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}}/>
-            <TextField label="獲得Pt/日" placeholder="30" value={numFriends} onChange={e => {
-              setNumFriends(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}}/>
-          </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "2ch"}}}>
-            ショップ
-            <TextField label="ボディラベル" placeholder="50000" value={bodyLabelShopPoints} onChange={e => {
-              setBodyLabelShopPoints(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="シルバーマイレージ" placeholder="200" value={mileageShopPoints} onChange={e => {
-              setMileageShopPoints(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}} />
-            <TextField label="ゴールドマイレージ" placeholder="100" value={advancedMileageShopPoints} onChange={e => {
-              setAdvancedMileageShopPoints(e.target.value);
-            }} variant="outlined" size="small" style={{width: 150}} />
-          </Box>
-          <Box component="form" sx={{"& > :not(style)": {m: 0.5, width: "150ch"}}}>
-            <FormControl sx={{m: 3}} component="fieldset" variant='standard'>
-              <FormGroup row>
-                <FormControlLabel control={<Checkbox size="small" checked={useSubscription} onChange={e => {
-                  setUseSubscription(e.target.checked);
-                }} />} label="30-DAY補給品" />
-                <FormControlLabel control={<Checkbox size="small" checked={usePremiumPass} onChange={e => {
-                  setUsePremiumPass(e.target.checked);
-                }} />} label="プレミアムパス" />
-              </FormGroup>
-              <FormGroup row>
-                <FormControlLabel control={<Checkbox size="small" checked={useGemsForAdvanced} onChange={e => {
-                  setUseGemsForAdvanced(e.target.checked);
-                }} />} label="ジュエルは特別募集優先" />
-              </FormGroup>
-            </FormControl>
-          </Box>
-        </Box>
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>試行結果(1000回)</TableCell>
-                <TableCell>平均</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>日数</TableCell>
-                <TableCell>{result.avg.days.toPrecision(3)}</TableCell>
-              </TableRow>
-              
-              <TableRow>
-                <TableCell>ピルグリム排出回数</TableCell>
-                <TableCell>{result.avg.numPilgrims.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>特別募集SSR排出回数</TableCell>
-                <TableCell>{result.avg.numAdvanced.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>その他SSR排出回数</TableCell>
-                <TableCell>{result.avg.numOtherwise.toPrecision(3)}</TableCell>
-              </TableRow>
+    <React.Fragment>
+      <Typography variant='subtitle1'>
+        3凸SSR5体の達成日数とガチャ回数の目安
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={2}>恒常SSR</Grid>
+        <Grid item xs={6} sm={2.5}>
+          <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => {
+            setNumSSR0(e.target.value);
+          }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} />
+        </Grid>
+        <Grid item xs={6} sm={2.5}>
+          <TextField label="1凸" placeholder="5" value={numSSR1} onChange={e => {
+            setNumSSR1(e.target.value);
+          }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} />
+        </Grid>
+        <Grid item xs={6} sm={2.5}>
+          <TextField label="2凸" placeholder="2" value={numSSR2} onChange={e => {
+            setNumSSR2(e.target.value);
+          }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} />
+        </Grid>
+        <Grid item xs={6} sm={2.5}>
+          <TextField label="3凸～" placeholder="0" value={numSSR3} onChange={e => {
+            setNumSSR3(e.target.value);
+          }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} />
+        </Grid>
+        
+        <Grid item xs={12} sm={2}>チケット🎫</Grid>
+        <Grid item xs={6} sm={5}>
+          <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => {
+            setVouchers(e.target.value);
+          }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} />
+        </Grid>
+        <Grid item xs={6} sm={5}>
+          <TextField label="特別募集" placeholder="10" value={advancedVouchers} onChange={e => {
+            setAdvancedVouchers(e.target.value);
+          }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} />  
+        </Grid>
+        
+        <Grid item xs={12} sm={2}>ジュエル💎</Grid>
+        <Grid item xs={12} sm={10}>        
+          <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => {
+            setGems(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
 
-              <TableRow>
-                <TableCell>一般募集</TableCell>
-                <TableCell>{result.avg.vouchers.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>特別募集</TableCell>
-                <TableCell>{result.avg.advancedVouchers.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ハイクオリティモールドガチャ</TableCell>
-                <TableCell>{result.avg.highQualityVouchers.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ミドルクオリティモールドガチャ</TableCell>
-                <TableCell>{result.avg.middleQualityVouchers.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ソーシャルポイント募集</TableCell>
-                <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>恒常スペアボディ交換</TableCell>
-                <TableCell>{result.avg.spareBodies.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>特別スペアボディ交換</TableCell>
-                <TableCell>{result.avg.advancedSpareBodies.toPrecision(3)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Grid item xs={12} sm={2}>モールド🔶</Grid>
+        <Grid item xs={6} sm={5}>
+          <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => {
+            setMiddleQualityMolds(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
+        <Grid item xs={6} sm={5}>
+          <TextField label="ハイクオリティ" placeholder="10" value={highQualityMolds} onChange={e => {
+            setHighQualityMolds(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
+        
+        <Grid item xs={12} sm={2}>フレンド💗</Grid>
+        <Grid item xs={6} sm={5}>
+          <TextField label="保有Pt" placeholder="100" value={friendPoints} onChange={e => {
+            setFriendPoints(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
+        <Grid item xs={6} sm={5}>
+          <TextField label="獲得Pt/日" placeholder="30" value={numFriends} onChange={e => {
+            setNumFriends(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
 
-        <h3>累計獲得ジュエル💎</h3>
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>平均</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>イベント報酬</TableCell>
-                <TableCell>{Math.floor(result.avg.eventRewardGems)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>デイリーミッション達成</TableCell>
-                <TableCell>{Math.floor(result.avg.dailyMissionGems)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ウィークリーミッション達成</TableCell>
-                <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>30-DAY補給品</TableCell>
-                <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <h3>累計獲得チケット🎫</h3>
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>一般募集</TableCell>
-                <TableCell>特別募集</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>イベント報酬</TableCell>
-                <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
-                <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ウィークリーミッション</TableCell>
-                <TableCell>{result.avg.weeklyMissionVouchers.toPrecision(3)}</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>プレミアムパス</TableCell>
-                <TableCell>{result.avg.premiumPassVouchers.toPrecision(3)}</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <h3>累計獲得モールド🔶</h3>
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>ミドルクオリティ</TableCell>
-                <TableCell>ハイクオリティ</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>イベント報酬</TableCell>
-                <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
-                <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>デイリーミッション</TableCell>
-                <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>ウィークリーミッション</TableCell>
-                <TableCell></TableCell>
-                <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>  
-              </TableRow>
-              <TableRow>
-                <TableCell>シーズンパス</TableCell>
-                <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
-                <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Container>
-    </ThemeProvider>
+        <Grid item xs={12} sm={2}>ショップ</Grid>
+        <Grid item xs={6} sm={3}>
+          <TextField label="シルバーマイレージ" placeholder="200" value={mileageShopPoints} onChange={e => {
+            setMileageShopPoints(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <TextField label="ゴールドマイレージ" placeholder="100" value={advancedMileageShopPoints} onChange={e => {
+            setAdvancedMileageShopPoints(e.target.value);
+          }} variant="outlined" size="small" fullWidth />
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <TextField label="ボディラベル" placeholder="50000" value={bodyLabelShopPoints} onChange={e => {
+            setBodyLabelShopPoints(e.target.value);
+          }} variant="outlined" size="small" fullWidth/>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel control={<Checkbox color="secondary" size="small" checked={useSubscription} onChange={e => {
+            setUseSubscription(e.target.checked);
+          }} />} label="30-DAY補給品" />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel control={<Checkbox color="secondary" size="small" checked={usePremiumPass} onChange={e => {
+            setUsePremiumPass(e.target.checked);
+          }} />} label="プレミアムパス" />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel control={<Checkbox color="secondary" size="small" checked={useGemsForAdvanced} onChange={e => {
+            setUseGemsForAdvanced(e.target.checked);
+          }} />} label="ジュエルは特別募集優先" />
+        </Grid>
+      </Grid>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>試行結果(1000回)</TableCell>
+              <TableCell>平均</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>日数</TableCell>
+              <TableCell>{result.avg.days.toPrecision(3)}</TableCell>
+            </TableRow>
+            
+            <TableRow>
+              <TableCell>ピルグリム排出回数</TableCell>
+              <TableCell>{result.avg.numPilgrims.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>特別募集SSR排出回数</TableCell>
+              <TableCell>{result.avg.numAdvanced.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>その他SSR排出回数</TableCell>
+              <TableCell>{result.avg.numOtherwise.toPrecision(3)}</TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>一般募集</TableCell>
+              <TableCell>{result.avg.vouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>特別募集</TableCell>
+              <TableCell>{result.avg.advancedVouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ハイクオリティモールドガチャ</TableCell>
+              <TableCell>{result.avg.highQualityVouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ミドルクオリティモールドガチャ</TableCell>
+              <TableCell>{result.avg.middleQualityVouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ソーシャルポイント募集</TableCell>
+              <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>恒常スペアボディ交換</TableCell>
+              <TableCell>{result.avg.spareBodies.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>特別スペアボディ交換</TableCell>
+              <TableCell>{result.avg.advancedSpareBodies.toPrecision(3)}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Typography variant="h6" gutterBottom>累計獲得ジュエル💎</Typography>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>平均</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>イベント報酬</TableCell>
+              <TableCell>{Math.floor(result.avg.eventRewardGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>デイリーミッション達成</TableCell>
+              <TableCell>{Math.floor(result.avg.dailyMissionGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ウィークリーミッション達成</TableCell>
+              <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>30-DAY補給品</TableCell>
+              <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Typography variant='h6' gutterBottom>累計獲得チケット🎫</Typography>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>一般募集</TableCell>
+              <TableCell>特別募集</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>イベント報酬</TableCell>
+              <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
+              <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ウィークリーミッション</TableCell>
+              <TableCell>{result.avg.weeklyMissionVouchers.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>プレミアムパス</TableCell>
+              <TableCell>{result.avg.premiumPassVouchers.toPrecision(3)}</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Typography variant='h6' gutterBottom>累計獲得モールド🔶</Typography>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>ミドルクオリティ</TableCell>
+              <TableCell>ハイクオリティ</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>イベント報酬</TableCell>
+              <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>デイリーミッション</TableCell>
+              <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ウィークリーミッション</TableCell>
+              <TableCell></TableCell>
+              <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>  
+            </TableRow>
+            <TableRow>
+              <TableCell>シーズンパス</TableCell>
+              <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
+              <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </React.Fragment>
   );
 }
 
