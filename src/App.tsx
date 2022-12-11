@@ -58,6 +58,7 @@ interface Sample {
   middleQualityVouchers: number;
   companyVouchers: number;
 
+  playerLevelUpGems: number;
   tribeTowerRewardGems: number;
 
   eventRewardGems: number;
@@ -75,7 +76,6 @@ interface Sample {
   premiumPassHighQualityMolds: number;
   premiumPassVouchers: number;
 
-  
   numPilgrims: number; // ピルグリム排出回数
   numAdvanced: number; // 期間限定排出回数
   numOtherwise: number; // (ピルグリムと期間限定を除く)一般SSR排出回数
@@ -92,6 +92,7 @@ const getDefaultSample = (): Sample => {
     highQualityVouchers: 0,
     middleQualityVouchers: 0,
 
+    playerLevelUpGems: 0,
     tribeTowerRewardGems: 0,
 
     eventRewardGems: 0,
@@ -151,6 +152,10 @@ const simulate = (props: Props): Sample => {
       res.subscriptionGems += RewardConfig.subscriptionGems;
     }
 
+    // player level up
+    gems += 30;
+    res.playerLevelUpGems += 30;
+
     // tribe tower
     const towerIndices = RewardConfig.companyTribeTowers[t % RewardConfig.companyTribeTowers.length]
     for (let towerIndex of towerIndices) {
@@ -169,8 +174,9 @@ const simulate = (props: Props): Sample => {
         }
       }
     }
-    
-    if (t % 30 < RewardConfig.seasonPassMiddleQualityMolds.length) { // season pass
+
+    // season pass
+    if (t % 30 < RewardConfig.seasonPassMiddleQualityMolds.length) {
       middleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
       res.seasonPassMiddleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
       if (props.usePremiumPass) {
@@ -384,6 +390,7 @@ const predict = (params: Props, num:number = 1000): {avg:Sample} => {
     res.avg.highQualityVouchers += sample.highQualityVouchers / num;
     res.avg.middleQualityVouchers += sample.middleQualityVouchers / num;
 
+    res.avg.playerLevelUpGems += sample.playerLevelUpGems / num;
     res.avg.tribeTowerRewardGems += sample.tribeTowerRewardGems / num;
 
     res.avg.eventRewardGems += sample.eventRewardGems / num;
@@ -741,8 +748,12 @@ const App = () => {
               <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>企業別トライブタワー</TableCell>
+              <TableCell>企業別トライブタワー(ピルグリム以外)</TableCell>
               <TableCell>{Math.floor(result.avg.tribeTowerRewardGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>指揮官レベルアップ</TableCell>
+              <TableCell>{Math.floor(result.avg.playerLevelUpGems)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>30-DAY補給品</TableCell>
