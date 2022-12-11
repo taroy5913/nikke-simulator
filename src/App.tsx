@@ -27,7 +27,9 @@ const RewardConfig = {
   subscriptionGems: 100,
   seasonPassMiddleQualityMolds: [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10],
   premiumPassHighQualityMolds: [5, 3, 3, 3, 7, 3, 3, 3, 3, 7, 3, 3, 3, 3, 0],
-  premiumPassVouchers: [5, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3]
+  premiumPassVouchers: [5, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3],
+  companyTribeTowers: [[0], [1], [2], [0], [1], [2], [0, 1, 2]], // 曜日ごとの企業別トライブタワー(いったん、ピルグリムタワーをのぞく)
+  // companyTribeTowers: [[0], [1], [2,3], [0], [1], [2], [0, 1, 2, 3]], // 曜日ごとの企業別トライブタワー
 }
 interface Props {
   duplicates: number[]; // no body, single, duplicate, triplicate
@@ -54,6 +56,10 @@ interface Sample {
   advancedVouchers: number;
   highQualityVouchers: number;
   middleQualityVouchers: number;
+  companyVouchers: number;
+
+  tribeTowerRewardGems: number;
+
   eventRewardGems: number;
   eventRewardVouchers: number;
   eventRewardAdvancedVouchers: number;
@@ -74,16 +80,20 @@ interface Sample {
   numAdvanced: number; // 期間限定排出回数
   numOtherwise: number; // (ピルグリムと期間限定を除く)一般SSR排出回数
 }
-const getDefaultSample = (defaultValue:number=0): Sample => {
+const getDefaultSample = (): Sample => {
   return {
-    days: defaultValue,
-    friendVouchers: defaultValue,
-    spareBodies: defaultValue,
-    advancedSpareBodies: defaultValue,
-    vouchers: defaultValue,
-    advancedVouchers: defaultValue,
-    highQualityVouchers: defaultValue,
-    middleQualityVouchers: defaultValue,
+    days: 0,
+    friendVouchers: 0,
+    spareBodies: 0,
+    advancedSpareBodies: 0,
+    vouchers: 0,
+    advancedVouchers: 0,
+    companyVouchers: 0,
+    highQualityVouchers: 0,
+    middleQualityVouchers: 0,
+
+    tribeTowerRewardGems: 0,
+
     eventRewardGems: 0,
     eventRewardVouchers: 0,
     eventRewardAdvancedVouchers: 0,
@@ -115,10 +125,15 @@ const simulate = (props: Props): Sample => {
   let advancedNikkes: number[] = new Array(100).fill(0);
   let vouchers = props.vouchers;
   let advancedVouchers = props.advancedVouchers;
+  
   let gems = props.gems;
   let bodyLabelShopPoints = props.bodyLabelShopPoints;
   let middleQualityMolds = props.middleQualityMolds;
   let highQualityMolds = props.highQualityMolds;
+  
+  let companiesMolds = [0, 0, 0, 0]; // TODO: add text field for pilgrim molds
+  let companyVouchers = 0;
+
   let friendPoints = props.friendPoints;
   let numFriends = props.numFriends;
   let mileageShopPoints = props.mileageShopPoints;
@@ -136,6 +151,24 @@ const simulate = (props: Props): Sample => {
       res.subscriptionGems += RewardConfig.subscriptionGems;
     }
 
+    // tribe tower
+    const towerIndices = RewardConfig.companyTribeTowers[t % RewardConfig.companyTribeTowers.length]
+    for (let towerIndex of towerIndices) {
+      for (let dt = 0; dt < 3; ++dt) {
+        const nt = t + dt;
+        if (nt % 5 === 0) {
+          // 5の倍数階ならジュエルx100, 企業別モールドx5
+          gems += 100;
+          res.tribeTowerRewardGems += 100;
+          companiesMolds[towerIndex] += 5;
+        } else {
+          // 5の倍数階以外ならジュエルx50, 企業別モールドx1
+          gems += 50;
+          res.tribeTowerRewardGems += 50;
+          companiesMolds[towerIndex] += 1;
+        }
+      }
+    }
     
     if (t % 30 < RewardConfig.seasonPassMiddleQualityMolds.length) { // season pass
       middleQualityMolds += RewardConfig.seasonPassMiddleQualityMolds[t % 30];
@@ -267,6 +300,28 @@ const simulate = (props: Props): Sample => {
       res.middleQualityVouchers += 1;
     }
 
+    // tribe tower for each company
+    for (let i = 0; i < companiesMolds.length; ++i) {
+      while (companiesMolds[i] >= 50) {
+        companyVouchers += 1;
+        res.companyVouchers += 1;
+        companiesMolds[i] -= 50;
+      }
+    }
+    while (companyVouchers > 0) {
+      const p = Math.random();
+      if (p < 0.5) { // SSR(50%)
+        nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
+        nikkes = sortForWishlist(nikkes);
+        res.numOtherwise += 1;
+      } else if (p < 0.5 + 0.3) { // SR(30%)
+        bodyLabelShopPoints += 200;
+      } else {
+        bodyLabelShopPoints += 150;
+      }
+      companyVouchers -= 1;
+    }
+
     while (friendPoints >= 10) {
       const p = Math.random();
       if (p < 0.02) {
@@ -313,7 +368,7 @@ const simulate = (props: Props): Sample => {
 
 const predict = (params: Props, num:number = 1000): {avg:Sample} => {
   let res = {
-    avg: getDefaultSample(0)
+    avg: getDefaultSample()
   }
 
   for (let k = 0; k < num; ++k) {
@@ -325,8 +380,11 @@ const predict = (params: Props, num:number = 1000): {avg:Sample} => {
     res.avg.advancedSpareBodies += sample.advancedSpareBodies / num;
     res.avg.vouchers += sample.vouchers / num;
     res.avg.advancedVouchers += sample.advancedVouchers / num;
+    res.avg.companyVouchers += sample.companyVouchers / num;
     res.avg.highQualityVouchers += sample.highQualityVouchers / num;
     res.avg.middleQualityVouchers += sample.middleQualityVouchers / num;
+
+    res.avg.tribeTowerRewardGems += sample.tribeTowerRewardGems / num;
 
     res.avg.eventRewardGems += sample.eventRewardGems / num;
     res.avg.eventRewardVouchers += sample.eventRewardVouchers / num;
@@ -641,6 +699,10 @@ const App = () => {
               <TableCell>{result.avg.middleQualityVouchers.toPrecision(3)}</TableCell>
             </TableRow>
             <TableRow>
+              <TableCell>企業モールドガチャ</TableCell>
+              <TableCell>{result.avg.companyVouchers.toPrecision(3)}</TableCell>
+            </TableRow>
+            <TableRow>
               <TableCell>ソーシャルポイント募集</TableCell>
               <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
             </TableRow>
@@ -677,6 +739,10 @@ const App = () => {
             <TableRow>
               <TableCell>ウィークリーミッション達成</TableCell>
               <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>企業別トライブタワー</TableCell>
+              <TableCell>{Math.floor(result.avg.tribeTowerRewardGems)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>30-DAY補給品</TableCell>
