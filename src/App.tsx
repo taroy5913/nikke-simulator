@@ -578,6 +578,13 @@ const App = () => {
     useGemsForAdvanced,
     usePilgrimTower
   });
+  const totalRewardGems = (
+    result.avg.eventRewardGems + 
+    result.avg.dailyMissionGems + 
+    result.avg.weeklyMissionGems + 
+    result.avg.tribeTowerRewardGems +
+    result.avg.subscriptionGems
+  );
   return (
     <React.Fragment>
       <Typography variant='subtitle1'>
@@ -783,6 +790,14 @@ const App = () => {
             <TableRow>
               <TableCell>30-DAY補給品</TableCell>
               <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>累計獲得ジュエル</TableCell>
+              <TableCell>{Math.floor(totalRewardGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>ジュエル/日</TableCell>
+              <TableCell>{Math.floor(totalRewardGems / Math.max(1, result.avg.days))}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
