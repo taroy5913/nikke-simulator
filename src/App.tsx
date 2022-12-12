@@ -1,6 +1,4 @@
 import { Box, Checkbox, createTheme, CssBaseline, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography } from '@mui/material';
-import { Container } from '@mui/system';
-import { useTheme } from '@mui/material/styles';
 import React from 'react';
 
 const sortForWishlist = (nikkes: number[]):number[] => {
@@ -13,6 +11,11 @@ const sortForWishlist = (nikkes: number[]):number[] => {
 const satisfied = (nikkes: number[], advancedNikkes: number[]):boolean => {
   return (advancedNikkes.filter(x => x >= 4).length + nikkes.filter(x => x >= 4).length) >= 5;
 }
+const TRIBE_TOWER_INDEX_TETRA = 0;
+const TRIBE_TOWER_INDEX_ELYSION = 1;
+const TRIBE_TOWER_INDEX_MISSILIS = 2;
+const TRIBE_TOWER_INDEX_PILGRIM = 3;
+
 const RewardConfig = {
   eventRewardGems: 300,
   eventRewardVouchers: 20,
@@ -28,8 +31,15 @@ const RewardConfig = {
   seasonPassMiddleQualityMolds: [10, 2, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 10],
   premiumPassHighQualityMolds: [5, 3, 3, 3, 7, 3, 3, 3, 3, 7, 3, 3, 3, 3, 0],
   premiumPassVouchers: [5, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3],
-  companyTribeTowers: [[0], [1], [2], [0], [1], [2], [0, 1, 2]], // 曜日ごとの企業別トライブタワー(いったん、ピルグリムタワーをのぞく)
-  // companyTribeTowers: [[0], [1], [2,3], [0], [1], [2], [0, 1, 2, 3]], // 曜日ごとの企業別トライブタワー
+  companyTribeTowers: [
+    [TRIBE_TOWER_INDEX_TETRA],
+    [TRIBE_TOWER_INDEX_ELYSION],
+    [TRIBE_TOWER_INDEX_MISSILIS, TRIBE_TOWER_INDEX_PILGRIM],
+    [TRIBE_TOWER_INDEX_TETRA],
+    [TRIBE_TOWER_INDEX_ELYSION],
+    [TRIBE_TOWER_INDEX_MISSILIS],
+    [TRIBE_TOWER_INDEX_TETRA, TRIBE_TOWER_INDEX_ELYSION, TRIBE_TOWER_INDEX_MISSILIS, TRIBE_TOWER_INDEX_PILGRIM]
+  ], // 曜日ごとの企業別トライブタワー
 }
 interface Props {
   duplicates: number[]; // no body, single, duplicate, triplicate
@@ -46,6 +56,7 @@ interface Props {
   useSubscription: boolean;
   usePremiumPass: boolean;
   useGemsForAdvanced: boolean;
+  usePilgrimTower: boolean;
 }
 interface Sample {
   days: number;
@@ -133,7 +144,6 @@ const simulate = (props: Props): Sample => {
   let highQualityMolds = props.highQualityMolds;
   
   let companiesMolds = [0, 0, 0, 0]; // TODO: add text field for pilgrim molds
-  let companyVouchers = 0;
 
   let friendPoints = props.friendPoints;
   let numFriends = props.numFriends;
@@ -159,6 +169,9 @@ const simulate = (props: Props): Sample => {
     // tribe tower
     const towerIndices = RewardConfig.companyTribeTowers[t % RewardConfig.companyTribeTowers.length]
     for (let towerIndex of towerIndices) {
+      if ((towerIndex === TRIBE_TOWER_INDEX_PILGRIM) && !props.usePilgrimTower) {
+        continue;
+      }
       for (let dt = 0; dt < 3; ++dt) {
         const nt = t + dt;
         if (nt % 5 === 0) {
@@ -309,23 +322,23 @@ const simulate = (props: Props): Sample => {
     // tribe tower for each company
     for (let i = 0; i < companiesMolds.length; ++i) {
       while (companiesMolds[i] >= 50) {
-        companyVouchers += 1;
+        const p = Math.random();
+        if (p < 0.5) { // SSR(50%)
+          nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
+          nikkes = sortForWishlist(nikkes);
+          if (i === TRIBE_TOWER_INDEX_PILGRIM) {
+            res.numPilgrims += 1;
+          } else {
+            res.numOtherwise += 1;  
+          }
+        } else if (p < 0.5 + 0.3) { // SR(30%)
+          bodyLabelShopPoints += 200;
+        } else {
+          bodyLabelShopPoints += 150;
+        }
         res.companyVouchers += 1;
         companiesMolds[i] -= 50;
       }
-    }
-    while (companyVouchers > 0) {
-      const p = Math.random();
-      if (p < 0.5) { // SSR(50%)
-        nikkes[Math.floor(Math.random() * nikkes.length)] += 1;
-        nikkes = sortForWishlist(nikkes);
-        res.numOtherwise += 1;
-      } else if (p < 0.5 + 0.3) { // SR(30%)
-        bodyLabelShopPoints += 200;
-      } else {
-        bodyLabelShopPoints += 150;
-      }
-      companyVouchers -= 1;
     }
 
     while (friendPoints >= 10) {
@@ -439,6 +452,7 @@ export enum LocalStorageKeys {
   USE_SUBSCRIPTION = "USE_SUBSCRIPTION",
   USE_PREMIUM_PASS = "USE_PREMIUM_PASS",
   USE_GEM_FOR_ADVANCED = "USE_GEM_FOR_ADVANCED",
+  USE_PILGRIM_TOWER = "USE_PILGRIM_TOWER",
 };
 
 const App = () => {
@@ -460,6 +474,7 @@ const App = () => {
   const [useSubscription, setUseSubscription] = React.useState<boolean>(false);
   const [usePremiumPass, setUsePremiumPass] = React.useState<boolean>(false);
   const [useGemsForAdvanced, setUseGemsForAdvanced] = React.useState<boolean>(false);
+  const [usePilgrimTower, setUsePilgrimTower] = React.useState<boolean>(false);
 
   const totalSSRUnits = 38; // 6体がピルグリム(2022.12.08にヘルム、ラプラスが恒常に追加)
 
@@ -482,6 +497,7 @@ const App = () => {
     setUseSubscription(localStorage.getItem(LocalStorageKeys.USE_SUBSCRIPTION) === "checked");
     setUsePremiumPass(localStorage.getItem(LocalStorageKeys.USE_PREMIUM_PASS) === "checked");
     setUseGemsForAdvanced(localStorage.getItem(LocalStorageKeys.USE_GEM_FOR_ADVANCED) === "checked");
+    setUsePilgrimTower(localStorage.getItem(LocalStorageKeys.USE_PILGRIM_TOWER) === "checked");
   }, []);
 
   React.useEffect(() => {
@@ -535,6 +551,9 @@ const App = () => {
   React.useEffect(() => {
     localStorage.setItem(LocalStorageKeys.USE_GEM_FOR_ADVANCED, useGemsForAdvanced ? "checked" : "");
   }, [useGemsForAdvanced]);
+  React.useEffect(() => {
+    localStorage.setItem(LocalStorageKeys.USE_PILGRIM_TOWER, usePilgrimTower ? "checked" : "");
+  }, [usePilgrimTower]);
 
   const result = predict({
     duplicates: [
@@ -556,7 +575,8 @@ const App = () => {
     advancedMileageShopPoints: Int(advancedMileageShopPoints),
     useSubscription,
     usePremiumPass,
-    useGemsForAdvanced
+    useGemsForAdvanced,
+    usePilgrimTower
   });
   return (
     <React.Fragment>
@@ -661,6 +681,11 @@ const App = () => {
             setUseGemsForAdvanced(e.target.checked);
           }} />} label="ジュエルは特別募集優先" />
         </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel control={<Checkbox color="secondary" size="small" checked={usePilgrimTower} onChange={e => {
+            setUsePilgrimTower(e.target.checked);
+          }} />} label="ピルグリムタワー" />
+        </Grid>
       </Grid>
       <TableContainer component={Paper}>
         <Table size="small">
@@ -748,7 +773,7 @@ const App = () => {
               <TableCell>{Math.floor(result.avg.weeklyMissionGems)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>企業別トライブタワー(ピルグリム以外)</TableCell>
+              <TableCell>企業別トライブタワー</TableCell>
               <TableCell>{Math.floor(result.avg.tribeTowerRewardGems)}</TableCell>
             </TableRow>
             <TableRow>
