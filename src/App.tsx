@@ -46,6 +46,7 @@ interface Props {
   vouchers: number;
   advancedVouchers: number;
   gems: number;
+  otherwiseGemsPerDay: number;
   bodyLabelShopPoints: number;
   middleQualityMolds: number;
   highQualityMolds: number;
@@ -83,6 +84,9 @@ interface Sample {
   weeklyMissionHighQualityMolds: number;
   weeklyMissionVouchers: number;
   subscriptionGems: number;
+
+  otherwiseGems: number; // キャンペーンやアチーブメント、お知らせなど突発的にもらえるジュエル
+  
   seasonPassMiddleQualityMolds: number;
   premiumPassHighQualityMolds: number;
   premiumPassVouchers: number;
@@ -117,6 +121,7 @@ const getDefaultSample = (): Sample => {
     weeklyMissionHighQualityMolds: 0,
     weeklyMissionVouchers: 0,
     subscriptionGems: 0,
+    otherwiseGems: 0,
     seasonPassMiddleQualityMolds: 0,
     premiumPassHighQualityMolds: 0,
     premiumPassVouchers: 0,
@@ -157,6 +162,10 @@ const simulate = (props: Props): Sample => {
     res.dailyMissionGems += dailyMissionGems;
     middleQualityMolds += RewardConfig.dailyMissionMiddleQualityMolds; // daily mission
     res.dailyMissionMiddleQualityMolds += RewardConfig.dailyMissionMiddleQualityMolds;
+    
+    gems += props.otherwiseGemsPerDay;
+    res.otherwiseGems += props.otherwiseGemsPerDay;
+
     if (props.useSubscription) {
       gems += RewardConfig.subscriptionGems;
       res.subscriptionGems += RewardConfig.subscriptionGems;
@@ -419,6 +428,7 @@ const predict = (params: Props, num:number = 1000): {avg:Sample} => {
     res.avg.weeklyMissionVouchers += sample.weeklyMissionVouchers / num;
 
     res.avg.subscriptionGems += sample.subscriptionGems / num;
+    res.avg.otherwiseGems += sample.otherwiseGems / num;
 
     res.avg.seasonPassMiddleQualityMolds += sample.seasonPassMiddleQualityMolds / num;
     res.avg.premiumPassHighQualityMolds += sample.premiumPassHighQualityMolds / num;
@@ -477,6 +487,7 @@ const App = () => {
   const [usePilgrimTower, setUsePilgrimTower] = React.useState<boolean>(false);
 
   const totalSSRUnits = 38; // 6体がピルグリム(2022.12.08にヘルム、ラプラスが恒常に追加)
+  const otherwiseGemsPerDay = 450; // ジュエル補正量/日
 
   React.useEffect(() => {
     setNumSSR0(localStorage.getItem(LocalStorageKeys.NUM_SSR0) || "");
@@ -566,6 +577,7 @@ const App = () => {
     vouchers: Int(vouchers),
     advancedVouchers: Int(advancedVouchers),
     gems: Int(gems),
+    otherwiseGemsPerDay,
     bodyLabelShopPoints: Int(bodyLabelShopPoints),
     middleQualityMolds: Int(middleQualityMolds),
     highQualityMolds: Int(highQualityMolds),
@@ -583,7 +595,8 @@ const App = () => {
     result.avg.dailyMissionGems + 
     result.avg.weeklyMissionGems + 
     result.avg.tribeTowerRewardGems +
-    result.avg.subscriptionGems
+    result.avg.subscriptionGems + 
+    result.avg.otherwiseGems
   );
   return (
     <React.Fragment>
@@ -626,10 +639,12 @@ const App = () => {
         </Grid>
         
         <Grid item xs={12} sm={2}>ジュエル💎</Grid>
-        <Grid item xs={12} sm={10}>        
-          <TextField label="ジュエル" placeholder="10000" value={gems} onChange={e => {
+        <Grid item xs={12} sm={5}>        
+          <TextField label="保有ジュエル" placeholder="10000" value={gems} onChange={e => {
             setGems(e.target.value);
           }} variant="outlined" size="small" fullWidth/>
+        </Grid>
+        <Grid item xs={12} sm={5}>
         </Grid>
 
         <Grid item xs={12} sm={2}>モールド🔶</Grid>
@@ -790,6 +805,10 @@ const App = () => {
             <TableRow>
               <TableCell>30-DAY補給品</TableCell>
               <TableCell>{Math.floor(result.avg.subscriptionGems)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>その他(キャンペーン、アチーブメントなど）</TableCell>
+              <TableCell>{Math.floor(result.avg.otherwiseGems)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>累計獲得ジュエル</TableCell>
