@@ -587,7 +587,7 @@ const App = () => {
   );
   return (
     <React.Fragment>
-      <Typography variant='subtitle1'>
+      <Typography variant='subtitle1' sx={{mb: 1}}>
         3凸SSR5体の達成日数とガチャ回数の目安
       </Typography>
       <Grid container spacing={2}>
@@ -667,7 +667,7 @@ const App = () => {
             setAdvancedMileageShopPoints(e.target.value);
           }} variant="outlined" size="small" fullWidth />
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid item xs={6} sm={4}>
           <TextField label="ボディラベル" placeholder="50000" value={bodyLabelShopPoints} onChange={e => {
             setBodyLabelShopPoints(e.target.value);
           }} variant="outlined" size="small" fullWidth/>
