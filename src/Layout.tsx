@@ -8,8 +8,18 @@ const ColorModeContext = React.createContext({
     toggleColorMode: () => {}
 });
 
+export enum ThemeKeys {
+    PALETTE_MODE = "PALLETE_MODE"
+}
+
 const Layout = () => {
     const [mode, setMode] = React.useState<"light" | "dark">("light");
+    React.useEffect(() => {
+        setMode(localStorage.getItem(ThemeKeys.PALETTE_MODE) === "dark" ? "dark" : "light");
+    }, []);
+    React.useEffect(() => {
+        localStorage.setItem(ThemeKeys.PALETTE_MODE, mode);
+    }, [mode]);
     const colorMode = React.useMemo(() => ({
         toggleColorMode: () => {
             setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
