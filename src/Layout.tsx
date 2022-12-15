@@ -62,14 +62,16 @@ const Layout = () => {
                         </Typography>
 
                         <Button
+                            color="inherit"
                             onClick={e => setIsLevelUpMode(false)}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            sx={{ my: 2, display: 'block' }}
                         >3凸5体
                         </Button>
                         <Button
+                            color="inherit"
                             onClick={e => setIsLevelUpMode(true)}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                        >ニケLv素材
+                            sx={{ my: 2, display: 'block' }}
+                        >素材
                         </Button>
 
                         <IconButton
