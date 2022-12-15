@@ -1,5 +1,7 @@
 import { Box, Checkbox, createTheme, CssBaseline, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography } from '@mui/material';
 import React from 'react';
+import { LocalStorageKeys } from './Status';
+import { Int } from './Utils';
 
 const sortForWishlist = (nikkes: number[]):number[] => {
   let a = nikkes.filter(x => x < 4);
@@ -440,30 +442,7 @@ const predict = (params: Props, num:number = 1000): {avg:Sample} => {
   }
   return res;
 }
-const Int = (s:string):number => {
-  const t = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
-  return parseInt(t) || 0
-}
-export enum LocalStorageKeys {
-  NUM_SSR0 = "NUM_SSR0",
-  NUM_SSR1 = "NUM_SSR1",
-  NUM_SSR2 = "NUM_SSR2",
-  NUM_SSR3 = "NUM_SSR3",
-  VOUCHERS = "VOUCHERS",
-  ADVANCED_VOUCHERS = "ADVANCED_VOUCHERS",
-  GEMS = "GEMS",
-  BODY_LABEL_SHOP_POINTS = "BODY_LABEL_SHOP_POINTS",
-  MIDDLE_QUALITY_MOLDS = "MIDDLE_QUALITY_MOLDS",
-  HIGH_QUALITY_MOLDS = "HIGH_QUALITY_MOLDS",
-  FRIEND_POINTS = "FRIEND_POINTS",
-  NUM_FRIENDS = "NUM_FRIENDS",
-  MILEAGE_SHOP_POINTS = "MILEAGE_SHOP_POINTS",
-  ADVANCED_MILEAGE_SHOP_POINTS = "ADVANCED_MILEAGE_SHOP_POINTS",
-  USE_SUBSCRIPTION = "USE_SUBSCRIPTION",
-  USE_PREMIUM_PASS = "USE_PREMIUM_PASS",
-  USE_GEM_FOR_ADVANCED = "USE_GEM_FOR_ADVANCED",
-  USE_PILGRIM_TOWER = "USE_PILGRIM_TOWER",
-};
+
 
 const App = () => {
   const [numSSR0, setNumSSR0] = React.useState<string>("");
@@ -473,6 +452,7 @@ const App = () => {
   const [vouchers, setVouchers] = React.useState<string>("");
   const [advancedVouchers, setAdvancedVouchers] = React.useState<string>("");
   const [gems, setGems] = React.useState<string>("");
+  
   const [bodyLabelShopPoints, setBodyLabelShopPoints] = React.useState<string>("");
   const [middleQualityMolds, setMiddleQualityMolds] = React.useState<string>("");
   const [highQualityMolds, setHighQualityMolds] = React.useState<string>("");

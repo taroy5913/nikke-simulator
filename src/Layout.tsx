@@ -1,8 +1,9 @@
 import React from 'react';
-import { AppBar, Container, CssBaseline, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Container, CssBaseline, IconButton, Toolbar, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import App from "./App";
+import LevelUpPanel from './LevelUpPanel';
 
 const ColorModeContext = React.createContext({
     toggleColorMode: () => {}
@@ -14,6 +15,7 @@ export enum ThemeKeys {
 
 const Layout = () => {
     const [mode, setMode] = React.useState<"light" | "dark">("light");
+    const [isLevelUpMode, setIsLevelUpMode] = React.useState<boolean>(false);
     React.useEffect(() => {
         setMode(localStorage.getItem(ThemeKeys.PALETTE_MODE) === "dark" ? "dark" : "light");
     }, []);
@@ -58,6 +60,18 @@ const Layout = () => {
                         >
                             NIKKE Simulator
                         </Typography>
+
+                        <Button
+                            onClick={e => setIsLevelUpMode(false)}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                        >3凸5体
+                        </Button>
+                        <Button
+                            onClick={e => setIsLevelUpMode(true)}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                        >ニケLv素材
+                        </Button>
+
                         <IconButton
                             sx={{ml: 1}}
                             onClick={colorMode.toggleColorMode}
@@ -68,7 +82,7 @@ const Layout = () => {
                     </Toolbar>
                 </AppBar>
                 <Container component="main" maxWidth="sm" sx={{mb: 4}}>
-                    <App />
+                    {isLevelUpMode ? <LevelUpPanel /> : <App />}
                 </Container>
             </ThemeProvider>
         </ColorModeContext.Provider>
