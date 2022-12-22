@@ -1,4 +1,4 @@
-import { Box, Checkbox, createTheme, CssBaseline, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Box, Checkbox, createTheme, CssBaseline, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography } from '@mui/material';
 import React from 'react';
 import { LocalStorageKeys } from './Status';
 import { Int } from './Utils';
@@ -396,13 +396,28 @@ const simulate = (props: Props): Sample => {
   return res;
 }
 
-const predict = (params: Props, num:number = 1000): {avg:Sample} => {
-  let res = {
-    avg: getDefaultSample()
+interface Result {
+  avg: Sample;
+  days: {
+    lessThan25: number;
+    lessThan50: number;
+    lessThan75: number;
   }
+}
+const predict = (params: Props, num:number = 1000): Result => {
+  let res = {
+    avg: getDefaultSample(),
+    days: {
+      lessThan25: 0,  // 25%以内
+      lessThan50: 0,  // 50%以内
+      lessThan75: 0,  // 75%以内
+    }
+  }
+  let days_list: number[] = [];
 
   for (let k = 0; k < num; ++k) {
     const sample = simulate(params);
+    days_list.push(sample.days);
     // 平均
     res.avg.days += sample.days / num;
     res.avg.friendVouchers += sample.friendVouchers / num;
@@ -439,6 +454,12 @@ const predict = (params: Props, num:number = 1000): {avg:Sample} => {
     res.avg.numPilgrims += sample.numPilgrims / num;
     res.avg.numAdvanced += sample.numAdvanced / num;
     res.avg.numOtherwise += sample.numOtherwise / num;
+  }
+  days_list.sort();
+  res.days = {
+    lessThan25: days_list[Math.floor(0.25 * days_list.length)],
+    lessThan50: days_list[Math.floor(0.50 * days_list.length)],
+    lessThan75: days_list[Math.floor(0.75 * days_list.length)]
   }
   return res;
 }
@@ -583,6 +604,30 @@ const App = () => {
       <Typography variant='subtitle1' sx={{mb: 1}}>
         3凸SSR5体の達成日数とガチャ回数の目安
       </Typography>
+      <TableContainer component={Paper} sx={{mb: 2}}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>割合(%)</TableCell>
+              <TableCell>日数</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>25%以内</TableCell>
+              <TableCell>{result.days.lessThan25}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>50%以内</TableCell>
+              <TableCell>{result.days.lessThan50}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>75%以内</TableCell>
+              <TableCell>{result.days.lessThan75}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={2}>恒常SSR</Grid>
         <Grid item xs={6} sm={2.5}>
