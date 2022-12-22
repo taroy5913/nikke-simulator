@@ -295,7 +295,7 @@ const LevelUpPanel = () => {
                     }} variant="outlined" size="small" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={12}>
-                    <Typography>コアダスト</Typography>
+                    <Typography>コアダスト🔴</Typography>
                 </Grid>
                 {coreDustParams.map(p => {
                     return (
@@ -307,7 +307,7 @@ const LevelUpPanel = () => {
                     );                    
                 })}
                 <Grid item xs={12} sm={12}>
-                    <Typography>バトルデータ</Typography>
+                    <Typography>バトルデータ🟦</Typography>
                 </Grid>
                 {battleDataParams.map((p, i) => {
                     return (
@@ -329,7 +329,7 @@ const LevelUpPanel = () => {
                     );                    
                 })}
                 <Grid item xs={12} sm={12}>
-                    <Typography>クレジット</Typography>
+                    <Typography>クレジット🟨</Typography>
                 </Grid>
                 {creditsParams.map((p, i) => {
                     return (
