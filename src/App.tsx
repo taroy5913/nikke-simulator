@@ -1,4 +1,4 @@
-import { Box, Checkbox, createTheme, CssBaseline, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Box, Checkbox, createTheme, CssBaseline, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, ToggleButton, Typography } from '@mui/material';
 import React from 'react';
 import { LocalStorageKeys } from './Status';
 import { Int } from './Utils';
@@ -413,11 +413,11 @@ const predict = (params: Props, num:number = 1000): Result => {
       lessThan75: 0,  // 75%以内
     }
   }
-  let days_list: number[] = [];
+  let daysList: number[] = [];
 
   for (let k = 0; k < num; ++k) {
     const sample = simulate(params);
-    days_list.push(sample.days);
+    daysList.push(sample.days);
     // 平均
     res.avg.days += sample.days / num;
     res.avg.friendVouchers += sample.friendVouchers / num;
@@ -455,11 +455,11 @@ const predict = (params: Props, num:number = 1000): Result => {
     res.avg.numAdvanced += sample.numAdvanced / num;
     res.avg.numOtherwise += sample.numOtherwise / num;
   }
-  days_list.sort();
+  daysList = daysList.sort((a,b) => a-b);
   res.days = {
-    lessThan25: days_list[Math.floor(0.25 * days_list.length)],
-    lessThan50: days_list[Math.floor(0.50 * days_list.length)],
-    lessThan75: days_list[Math.floor(0.75 * days_list.length)]
+    lessThan25: daysList[Math.floor(0.25 * daysList.length)],
+    lessThan50: daysList[Math.floor(0.50 * daysList.length)],
+    lessThan75: daysList[Math.floor(0.75 * daysList.length)]
   }
   return res;
 }
@@ -473,6 +473,7 @@ const App = () => {
   const [vouchers, setVouchers] = React.useState<string>("");
   const [advancedVouchers, setAdvancedVouchers] = React.useState<string>("");
   const [gems, setGems] = React.useState<string>("");
+  const [verbose, setVerbose] = React.useState<boolean>(false);
   
   const [bodyLabelShopPoints, setBodyLabelShopPoints] = React.useState<string>("");
   const [middleQualityMolds, setMiddleQualityMolds] = React.useState<string>("");
@@ -614,21 +615,21 @@ const App = () => {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>25%以内</TableCell>
-              <TableCell>{result.days.lessThan25}</TableCell>
+              <TableCell>～25%</TableCell>
+              <TableCell>{result.days.lessThan25}日以内</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>50%以内</TableCell>
-              <TableCell>{result.days.lessThan50}</TableCell>
+              <TableCell>～50%</TableCell>
+              <TableCell>{result.days.lessThan50}日以内</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>75%以内</TableCell>
-              <TableCell>{result.days.lessThan75}</TableCell>
+              <TableCell>～75%</TableCell>
+              <TableCell>{result.days.lessThan75}日以内</TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{mb:2}}>
         <Grid item xs={12} sm={2}>恒常SSR</Grid>
         <Grid item xs={6} sm={2.5}>
           <TextField label="無凸" placeholder="10" value={numSSR0} onChange={e => {
@@ -650,7 +651,9 @@ const App = () => {
             setNumSSR3(e.target.value);
           }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">体</InputAdornment>}} />
         </Grid>
-        
+      </Grid>
+
+      <Grid container display={verbose ? "" : "none"} spacing={2} sx={{mb: 2}}>
         <Grid item xs={12} sm={2}>チケット🎫</Grid>
         <Grid item xs={6} sm={5}>
           <TextField label="一般募集" placeholder="30" value={vouchers} onChange={e => {
@@ -662,16 +665,19 @@ const App = () => {
             setAdvancedVouchers(e.target.value);
           }} variant="outlined" size="small" fullWidth InputProps={{endAdornment: <InputAdornment position="end">枚</InputAdornment>}} />  
         </Grid>
-        
-        <Grid item xs={12} sm={2}>ジュエル💎</Grid>
-        <Grid item xs={12} sm={5}>        
-          <TextField label="保有ジュエル" placeholder="10000" value={gems} onChange={e => {
-            setGems(e.target.value);
-          }} variant="outlined" size="small" fullWidth/>
-        </Grid>
-        <Grid item xs={12} sm={5}>
-        </Grid>
+      </Grid>
 
+      <Grid container spacing={2} sx={{mb: 2}}>
+        <Grid item xs={12} sm={2}>ジュエル💎</Grid>
+          <Grid item xs={12} sm={5}>        
+            <TextField label="保有ジュエル" placeholder="10000" value={gems} onChange={e => {
+              setGems(e.target.value);
+            }} variant="outlined" size="small" fullWidth/>
+          </Grid>
+          <Grid item xs={12} sm={5} />
+      </Grid>
+
+      <Grid container display={verbose ? "" : "none"} spacing={2} sx={{mb: 2}}>
         <Grid item xs={12} sm={2}>モールド🔶</Grid>
         <Grid item xs={6} sm={5}>
           <TextField label="ミドルクオリティ" placeholder="30" value={middleQualityMolds} onChange={e => {
@@ -712,7 +718,9 @@ const App = () => {
             setBodyLabelShopPoints(e.target.value);
           }} variant="outlined" size="small" fullWidth/>
         </Grid>
+      </Grid>
 
+      <Grid container display={verbose ? "" : "none"} sx={{mb: 2}}>
         <Grid item xs={12} sm={6}>
           <FormControlLabel control={<Checkbox color="secondary" size="small" checked={useSubscription} onChange={e => {
             setUseSubscription(e.target.checked);
@@ -734,68 +742,78 @@ const App = () => {
           }} />} label="ピルグリムタワー" />
         </Grid>
       </Grid>
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>試行結果(1000回)</TableCell>
-              <TableCell>平均</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>日数</TableCell>
-              <TableCell>{result.avg.days.toPrecision(3)}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>ピルグリム排出回数</TableCell>
-              <TableCell>{result.avg.numPilgrims.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>特別募集SSR排出回数</TableCell>
-              <TableCell>{result.avg.numAdvanced.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>その他SSR排出回数</TableCell>
-              <TableCell>{result.avg.numOtherwise.toPrecision(3)}</TableCell>
-            </TableRow>
 
-            <TableRow>
-              <TableCell>一般募集</TableCell>
-              <TableCell>{result.avg.vouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>特別募集</TableCell>
-              <TableCell>{result.avg.advancedVouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>ハイクオリティモールドガチャ</TableCell>
-              <TableCell>{result.avg.highQualityVouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>ミドルクオリティモールドガチャ</TableCell>
-              <TableCell>{result.avg.middleQualityVouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>企業モールドガチャ</TableCell>
-              <TableCell>{result.avg.companyVouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>ソーシャルポイント募集</TableCell>
-              <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>恒常スペアボディ交換</TableCell>
-              <TableCell>{result.avg.spareBodies.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>特別スペアボディ交換</TableCell>
-              <TableCell>{result.avg.advancedSpareBodies.toPrecision(3)}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <ToggleButton
+        value="check"
+        selected={verbose}
+        onChange={() => {setVerbose(!verbose)}}
+      >
+        <Typography>{verbose ? "簡易" : "詳細"}</Typography>
+      </ToggleButton>
+
+      <Box display={verbose ? "": "none"}>
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>試行結果(1000回)</TableCell>
+                <TableCell>平均</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>日数</TableCell>
+                <TableCell>{result.avg.days.toPrecision(3)}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>ピルグリム排出回数</TableCell>
+                <TableCell>{result.avg.numPilgrims.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>特別募集SSR排出回数</TableCell>
+                <TableCell>{result.avg.numAdvanced.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>その他SSR排出回数</TableCell>
+                <TableCell>{result.avg.numOtherwise.toPrecision(3)}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell>一般募集</TableCell>
+                <TableCell>{result.avg.vouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>特別募集</TableCell>
+                <TableCell>{result.avg.advancedVouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>ハイクオリティモールドガチャ</TableCell>
+                <TableCell>{result.avg.highQualityVouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>ミドルクオリティモールドガチャ</TableCell>
+                <TableCell>{result.avg.middleQualityVouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>企業モールドガチャ</TableCell>
+                <TableCell>{result.avg.companyVouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>ソーシャルポイント募集</TableCell>
+                <TableCell>{result.avg.friendVouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>恒常スペアボディ交換</TableCell>
+                <TableCell>{result.avg.spareBodies.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>特別スペアボディ交換</TableCell>
+                <TableCell>{result.avg.advancedSpareBodies.toPrecision(3)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
       <Typography variant="h6" gutterBottom>累計獲得ジュエル💎</Typography>
       <TableContainer component={Paper}>
@@ -846,69 +864,71 @@ const App = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
       <Typography variant='h6' gutterBottom>累計獲得チケット🎫</Typography>
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>一般募集</TableCell>
-              <TableCell>特別募集</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>イベント報酬</TableCell>
-              <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
-              <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>ウィークリーミッション</TableCell>
-              <TableCell>{result.avg.weeklyMissionVouchers.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>プレミアムパス</TableCell>
-              <TableCell>{result.avg.premiumPassVouchers.toPrecision(3)}</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Typography variant='h6' gutterBottom>累計獲得モールド🔶</Typography>
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>ミドルクオリティ</TableCell>
-              <TableCell>ハイクオリティ</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>イベント報酬</TableCell>
-              <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
-              <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>デイリーミッション</TableCell>
-              <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>ウィークリーミッション</TableCell>
-              <TableCell></TableCell>
-              <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>  
-            </TableRow>
-            <TableRow>
-              <TableCell>シーズンパス</TableCell>
-              <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
-              <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>一般募集</TableCell>
+                <TableCell>特別募集</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>イベント報酬</TableCell>
+                <TableCell>{result.avg.eventRewardVouchers.toPrecision(3)}</TableCell>
+                <TableCell>{result.avg.eventRewardAdvancedVouchers.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>ウィークリーミッション</TableCell>
+                <TableCell>{result.avg.weeklyMissionVouchers.toPrecision(3)}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>プレミアムパス</TableCell>
+                <TableCell>{result.avg.premiumPassVouchers.toPrecision(3)}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Typography variant='h6' gutterBottom>累計獲得モールド🔶</Typography>
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>ミドルクオリティ</TableCell>
+                <TableCell>ハイクオリティ</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>イベント報酬</TableCell>
+                <TableCell>{result.avg.eventRewardMiddleQualityMolds.toPrecision(3)}</TableCell>
+                <TableCell>{result.avg.eventRewardHighQualityMolds.toPrecision(3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>デイリーミッション</TableCell>
+                <TableCell>{Math.floor(result.avg.dailyMissionMiddleQualityMolds)}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>ウィークリーミッション</TableCell>
+                <TableCell></TableCell>
+                <TableCell>{result.avg.weeklyMissionHighQualityMolds.toPrecision(3)}</TableCell>  
+              </TableRow>
+              <TableRow>
+                <TableCell>シーズンパス</TableCell>
+                <TableCell>{result.avg.seasonPassMiddleQualityMolds.toPrecision(3)}</TableCell>
+                <TableCell>{result.avg.premiumPassHighQualityMolds.toPrecision(3)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </React.Fragment>
   );
 }
