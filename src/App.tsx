@@ -158,6 +158,8 @@ const simulate = (props: Props): Sample => {
   let advancedMileageShopPoints = props.advancedMileageShopPoints;
   let res = getDefaultSample();
   for (let t = 0; t < 1000; ++t) {
+    nikkes = sortForWishlist(nikkes);
+
     // daily mission
     const dailyMissionGems = RewardConfig.dailyMissionGems + Math.floor(Math.random() * 30);
     gems += dailyMissionGems; // daily mission + 派遣報酬
